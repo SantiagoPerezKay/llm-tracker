@@ -1,0 +1,30 @@
+server {
+    listen 80;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    # Resolver de Docker — resuelve el upstream en cada request, no al iniciar
+    resolver 127.0.0.11 valid=30s ipv6=off;
+
+    # React SPA: todas las rutas devuelven index.html
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Proxy del API al backend
+    # API_HOST se inyecta como variable de entorno (default: "api")
+    location /api {
+        set $backend http://${API_HOST}:8000;
+        proxy_pass $backend;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_read_timeout 120s;
+    }
+
+    # Caché de assets estáticos
+    location ~* \.(js|css|png|jpg|webp|svg|ico|woff2?)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+}

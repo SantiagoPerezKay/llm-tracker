@@ -3,17 +3,16 @@ services:
   # ── FastAPI Backend ──────────────────────────────────────
   api:
     build: ./backend
-    ports:
-      - "8000:8000"
     environment:
-      # DATABASE_URL se lee del .env del servidor (apunta a tu Postgres de EasyPanel)
-      DATABASE_URL:       ${DATABASE_URL}
-      OPENAI_API_KEY:     ${OPENAI_API_KEY}
-      GEMINI_API_KEY:     ${GEMINI_API_KEY}
-      OPENAI_MODEL:       ${OPENAI_MODEL:-gpt-4.1}
+      DATABASE_URL:          ${DATABASE_URL}
+      OPENAI_API_KEY:        ${OPENAI_API_KEY}
+      GEMINI_API_KEY:        ${GEMINI_API_KEY}
+      OPENAI_MODEL:          ${OPENAI_MODEL:-gpt-4.1}
       OPENAI_ANALYZER_MODEL: ${OPENAI_ANALYZER_MODEL:-gpt-4.1-mini}
-      GEMINI_MODEL:       ${GEMINI_MODEL:-gemini-2.0-flash}
-      DEBUG:              ${DEBUG:-false}
+      GEMINI_MODEL:          ${GEMINI_MODEL:-gemini-2.0-flash}
+      DEBUG:                 ${DEBUG:-false}
+    networks:
+      - dokploy-network
     restart: unless-stopped
 
   # ── React Frontend (nginx) ───────────────────────────────
@@ -21,6 +20,16 @@ services:
     build: ./frontend
     ports:
       - "3000:80"
+    environment:
+      # Hostname interno del backend. En docker-compose local = "api" (nombre del servicio).
+      # En EasyPanel servicios separados: poné el nombre interno del servicio backend.
+      API_HOST: ${API_HOST:-api}
     depends_on:
       - api
+    networks:
+      - dokploy-network
     restart: unless-stopped
+
+networks:
+  dokploy-network:
+    external: true

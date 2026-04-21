@@ -4,7 +4,8 @@
       "Bash(not exist *)",
       "Bash(copy \"C:\\\\Users\\\\santy\\\\Desktop\\\\trabajo\\\\llm-tracker\\\\frontend\\\\dist\\\\assets\\\\sembi-logo.webp\" \"C:\\\\Users\\\\santy\\\\Desktop\\\\trabajo\\\\llm-tracker\\\\frontend\\\\public\\\\assets\\\\sembi-logo.webp\")",
       "PowerShell(New-Item -ItemType Directory -Force -Path \"C:\\\\Users\\\\santy\\\\Desktop\\\\trabajo\\\\llm-tracker\\\\frontend\\\\public\\\\assets\")",
-      "PowerShell(Copy-Item \"C:\\\\Users\\\\santy\\\\Desktop\\\\trabajo\\\\llm-tracker\\\\frontend\\\\dist\\\\assets\\\\sembi-logo.webp\" \"C:\\\\Users\\\\santy\\\\Desktop\\\\trabajo\\\\llm-tracker\\\\frontend\\\\public\\\\assets\\\\sembi-logo.webp\")"
+      "PowerShell(Copy-Item \"C:\\\\Users\\\\santy\\\\Desktop\\\\trabajo\\\\llm-tracker\\\\frontend\\\\dist\\\\assets\\\\sembi-logo.webp\" \"C:\\\\Users\\\\santy\\\\Desktop\\\\trabajo\\\\llm-tracker\\\\frontend\\\\public\\\\assets\\\\sembi-logo.webp\")",
+      "WebSearch"
     ]
   }
 }
