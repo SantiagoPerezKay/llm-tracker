@@ -1,0 +1,1994 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LLM Brand Tracker — Concepto del Proyecto</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+    * { font-family: 'Inter', sans-serif; }
+    html { scroll-behavior: smooth; }
+    .gradient-text {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
+    .flow-line { position: relative; }
+    .flow-line::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: -32px;
+      width: 2px;
+      height: 32px;
+      background: linear-gradient(to bottom, #8b5cf6, transparent);
+    }
+    .metric-bar { transition: width 1.5s ease; }
+    .fade-in { animation: fadeIn 0.6s ease forwards; opacity: 0; }
+    @keyframes fadeIn { to { opacity: 1; } }
+    .pulse-dot { animation: pulse 2s infinite; }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.5); }
+    }
+    .nav-link { transition: color 0.2s; }
+    .nav-link:hover { color: #8b5cf6; }
+    .section-divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, #e5e7eb, transparent);
+    }
+    .tag {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+
+  <!-- Navbar -->
+  <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-md border-b border-gray-100 z-50">
+    <div class="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+        </div>
+        <span class="font-bold text-lg">LLM Brand Tracker</span>
+      </div>
+      <div class="hidden md:flex items-center gap-6 text-sm text-gray-600">
+        <a href="#problema" class="nav-link">Problema</a>
+        <a href="#solucion" class="nav-link">Solucion</a>
+        <a href="#como-funciona" class="nav-link">Proceso</a>
+        <a href="#metricas" class="nav-link">Metricas</a>
+        <a href="#dashboard" class="nav-link">Dashboard</a>
+        <a href="#arquitectura" class="nav-link">Arquitectura</a>
+        <a href="#preguntas" class="nav-link">Preguntas IA</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="pt-32 pb-20 px-6">
+    <div class="max-w-4xl mx-auto text-center">
+      <div class="inline-block mb-4 px-4 py-1.5 rounded-full bg-indigo-50 text-indigo-700 text-sm font-medium">
+        Concepto de Proyecto
+      </div>
+      <h1 class="text-5xl md:text-6xl font-extrabold leading-tight mb-6">
+        Descubre como la <span class="gradient-text">IA percibe</span> tu negocio
+      </h1>
+      <p class="text-xl text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed">
+        Analiza en tiempo real como ChatGPT y Gemini ven, describen y posicionan tu empresa frente a la competencia. Controla tu reputacion en la nueva era de las busquedas por IA.
+      </p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-gray-200 shadow-sm">
+          <div class="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center">
+            <svg class="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+          </div>
+          <span class="text-sm font-medium">OpenAI (ChatGPT)</span>
+        </div>
+        <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-gray-200 shadow-sm">
+          <div class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center">
+            <svg class="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+          </div>
+          <span class="text-sm font-medium">Google Gemini</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider max-w-4xl mx-auto"></div>
+
+  <!-- Problema -->
+  <section id="problema" class="py-20 px-6">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-14">
+        <span class="tag bg-red-50 text-red-600">El Problema</span>
+        <h2 class="text-3xl font-bold mt-4 mb-3">La IA esta reemplazando a Google como fuente de informacion</h2>
+        <p class="text-gray-500 max-w-2xl mx-auto">Cada vez mas personas preguntan a ChatGPT o Gemini en vez de buscar en Google. Si la IA no conoce tu negocio o lo percibe mal, estas perdiendo clientes sin saberlo.</p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm card-hover">
+          <div class="text-3xl font-bold text-red-500 mb-2">68%</div>
+          <div class="text-sm font-semibold mb-1">de los usuarios</div>
+          <p class="text-gray-500 text-sm">Ya usan asistentes IA para buscar servicios locales y recomendaciones de negocios.</p>
+        </div>
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm card-hover">
+          <div class="text-3xl font-bold text-amber-500 mb-2">0%</div>
+          <div class="text-sm font-semibold mb-1">de visibilidad</div>
+          <p class="text-gray-500 text-sm">La mayoria de PYMEs no saben si la IA las menciona, las ignora o dice informacion incorrecta.</p>
+        </div>
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm card-hover">
+          <div class="text-3xl font-bold text-purple-500 mb-2">2 LLMs</div>
+          <div class="text-sm font-semibold mb-1">dominan el mercado</div>
+          <p class="text-gray-500 text-sm">ChatGPT y Gemini concentran +85% de las consultas de IA conversacional a nivel global.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider max-w-4xl mx-auto"></div>
+
+  <!-- Solucion -->
+  <section id="solucion" class="py-20 px-6">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-14">
+        <span class="tag bg-emerald-50 text-emerald-600">La Solucion</span>
+        <h2 class="text-3xl font-bold mt-4 mb-3">Un tracker que radiografia como la IA ve tu empresa</h2>
+        <p class="text-gray-500 max-w-2xl mx-auto">Introduces tu negocio, lanzamos preguntas reales a ChatGPT y Gemini, y analizamos cada respuesta con metricas accionables.</p>
+      </div>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
+          <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm font-bold">1</span>
+            Formulario de entrada
+          </h3>
+          <div class="bg-gray-50 rounded-xl p-5 space-y-3">
+            <div>
+              <label class="text-xs font-medium text-gray-500 uppercase tracking-wide">Nombre del negocio</label>
+              <div class="mt-1 px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm">Veterinaria San Marcos</div>
+            </div>
+            <div>
+              <label class="text-xs font-medium text-gray-500 uppercase tracking-wide">Ciudad / Zona</label>
+              <div class="mt-1 px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm">Madrid, Chamberi</div>
+            </div>
+            <div>
+              <label class="text-xs font-medium text-gray-500 uppercase tracking-wide">Sector</label>
+              <div class="mt-1 px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm">Veterinaria / Cuidado animal</div>
+            </div>
+            <div>
+              <label class="text-xs font-medium text-gray-500 uppercase tracking-wide">Web (opcional)</label>
+              <div class="mt-1 px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-400">https://vetesanmarcos.es</div>
+            </div>
+            <div>
+              <label class="text-xs font-medium text-gray-500 uppercase tracking-wide">Competidores (opcional)</label>
+              <div class="mt-1 px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-400">Veterinaria ABC, Clinica Animal Plus</div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
+          <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm font-bold">2</span>
+            Resultado del analisis
+          </h3>
+          <div class="space-y-4">
+            <div class="bg-gray-50 rounded-xl p-4">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-semibold">Sentimiento General</span>
+                <span class="tag bg-emerald-100 text-emerald-700">Positivo</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2.5">
+                <div class="bg-emerald-500 h-2.5 rounded-full metric-bar" style="width: 78%"></div>
+              </div>
+              <div class="text-xs text-gray-400 mt-1">78/100 — Score promedio entre ambos LLMs</div>
+            </div>
+            <div class="bg-gray-50 rounded-xl p-4">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-semibold">Posicion en recomendaciones</span>
+                <span class="text-2xl font-bold text-indigo-600">#2</span>
+              </div>
+              <div class="text-xs text-gray-400">Cuando un usuario pide "mejor veterinaria en Madrid", apareces 2do de media</div>
+            </div>
+            <div class="bg-gray-50 rounded-xl p-4">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-semibold">Precision de datos</span>
+                <span class="tag bg-amber-100 text-amber-700">Parcial</span>
+              </div>
+              <div class="text-xs text-gray-400">ChatGPT tiene tu direccion correcta, Gemini muestra un telefono antiguo</div>
+            </div>
+            <div class="bg-gray-50 rounded-xl p-4">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-sm font-semibold">Temas asociados</span>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <span class="tag bg-indigo-50 text-indigo-600">urgencias 24h</span>
+                <span class="tag bg-indigo-50 text-indigo-600">cirugia</span>
+                <span class="tag bg-indigo-50 text-indigo-600">precios altos</span>
+                <span class="tag bg-indigo-50 text-indigo-600">buen trato</span>
+                <span class="tag bg-amber-50 text-amber-600">parking dificil</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider max-w-4xl mx-auto"></div>
+
+  <!-- Como Funciona - Proceso -->
+  <section id="como-funciona" class="py-20 px-6">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-14">
+        <span class="tag bg-purple-50 text-purple-600">Proceso Completo</span>
+        <h2 class="text-3xl font-bold mt-4 mb-3">Como funciona paso a paso</h2>
+        <p class="text-gray-500 max-w-2xl mx-auto">Desde que introduces tu negocio hasta que ves el dashboard con todos los insights.</p>
+      </div>
+
+      <div class="space-y-6 max-w-3xl mx-auto">
+        <!-- Paso 1 -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex gap-5 items-start card-hover">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg flex-shrink-0">1</div>
+          <div>
+            <h3 class="font-bold text-lg mb-1">Usuario introduce datos del negocio</h3>
+            <p class="text-gray-500 text-sm">Nombre, ciudad, sector, web y competidores opcionales. Con esto el sistema tiene contexto suficiente para generar preguntas inteligentes.</p>
+          </div>
+        </div>
+
+        <!-- Paso 2 -->
+        <div class="flex justify-center">
+          <svg class="w-6 h-6 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex gap-5 items-start card-hover">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg flex-shrink-0">2</div>
+          <div>
+            <h3 class="font-bold text-lg mb-1">Generacion automatica de preguntas</h3>
+            <p class="text-gray-500 text-sm mb-3">El sistema genera 15-25 preguntas en 6 categorias diferentes, simulando lo que un cliente real preguntaria a la IA.</p>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+              <span class="tag bg-blue-50 text-blue-600">Conocimiento directo</span>
+              <span class="tag bg-emerald-50 text-emerald-600">Recomendacion</span>
+              <span class="tag bg-amber-50 text-amber-600">Comparativa</span>
+              <span class="tag bg-red-50 text-red-600">Reputacion</span>
+              <span class="tag bg-purple-50 text-purple-600">Servicios</span>
+              <span class="tag bg-pink-50 text-pink-600">Precio</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paso 3 -->
+        <div class="flex justify-center">
+          <svg class="w-6 h-6 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm card-hover">
+          <div class="flex gap-5 items-start">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg flex-shrink-0">3</div>
+            <div>
+              <h3 class="font-bold text-lg mb-1">Consulta simultanea a OpenAI y Gemini</h3>
+              <p class="text-gray-500 text-sm mb-4">Cada pregunta se envia en paralelo a ambos LLMs. Se registra la respuesta completa, el tiempo de respuesta y los tokens usados.</p>
+            </div>
+          </div>
+          <div class="grid md:grid-cols-2 gap-4 mt-4 ml-0 md:ml-16">
+            <div class="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
+              <div class="flex items-center gap-2 mb-2">
+                <div class="w-5 h-5 rounded-full bg-emerald-500"></div>
+                <span class="text-sm font-semibold text-emerald-800">OpenAI (GPT-4.1)</span>
+              </div>
+              <div class="text-xs text-emerald-700 bg-emerald-100/50 rounded-lg p-3 font-mono">
+                "Veterinaria San Marcos en Madrid es una clinica veterinaria ubicada en el barrio de Chamberi, conocida por su servicio de urgencias 24 horas y su equipo de cirujanos especializados..."
+              </div>
+            </div>
+            <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
+              <div class="flex items-center gap-2 mb-2">
+                <div class="w-5 h-5 rounded-full bg-blue-500"></div>
+                <span class="text-sm font-semibold text-blue-800">Gemini (2.5 Pro)</span>
+              </div>
+              <div class="text-xs text-blue-700 bg-blue-100/50 rounded-lg p-3 font-mono">
+                "San Marcos es una veterinaria en Madrid que ofrece servicios generales y de urgencia. Segun resenas en Google, los clientes destacan la atencion personalizada aunque algunos mencionan precios elevados..."
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paso 4 -->
+        <div class="flex justify-center">
+          <svg class="w-6 h-6 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex gap-5 items-start card-hover">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg flex-shrink-0">4</div>
+          <div>
+            <h3 class="font-bold text-lg mb-1">Analisis profundo de cada respuesta</h3>
+            <p class="text-gray-500 text-sm mb-3">Un LLM analista (separado) procesa cada respuesta y extrae metricas estructuradas:</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div class="flex items-start gap-2">
+                <svg class="w-4 h-4 text-indigo-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg>
+                <span class="text-sm text-gray-600"><strong>Sentimiento</strong> — positivo, negativo, neutro + score 0-100</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <svg class="w-4 h-4 text-indigo-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg>
+                <span class="text-sm text-gray-600"><strong>Posicion</strong> — en que lugar te menciona vs competidores</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <svg class="w-4 h-4 text-indigo-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg>
+                <span class="text-sm text-gray-600"><strong>Precision</strong> — datos correctos vs incorrectos vs inventados</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <svg class="w-4 h-4 text-indigo-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg>
+                <span class="text-sm text-gray-600"><strong>Mencion</strong> — si te nombra, te ignora o te confunde con otro</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <svg class="w-4 h-4 text-indigo-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg>
+                <span class="text-sm text-gray-600"><strong>Temas</strong> — palabras clave y atributos asociados</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <svg class="w-4 h-4 text-indigo-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg>
+                <span class="text-sm text-gray-600"><strong>Intencion</strong> — informar, recomendar, disuadir, comparar</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paso 5 -->
+        <div class="flex justify-center">
+          <svg class="w-6 h-6 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex gap-5 items-start card-hover">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg flex-shrink-0">5</div>
+          <div>
+            <h3 class="font-bold text-lg mb-1">Dashboard con todos los resultados</h3>
+            <p class="text-gray-500 text-sm">Visualizacion completa: comparativa entre LLMs, evolucion temporal, alertas de informacion incorrecta y recomendaciones de mejora.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider max-w-4xl mx-auto"></div>
+
+  <!-- Categorias de preguntas -->
+  <section id="preguntas" class="py-20 px-6">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-14">
+        <span class="tag bg-blue-50 text-blue-600">Motor de Preguntas</span>
+        <h2 class="text-3xl font-bold mt-4 mb-3">25 preguntas en 6 categorias</h2>
+        <p class="text-gray-500 max-w-2xl mx-auto">Cada categoria simula un tipo diferente de busqueda que un cliente real haria en ChatGPT o Gemini.</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-6">
+        <!-- Cat 1: Conocimiento directo -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm card-hover">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
+              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div>
+              <h3 class="font-bold">Conocimiento Directo</h3>
+              <span class="text-xs text-gray-400">Que sabe la IA sobre ti</span>
+            </div>
+          </div>
+          <div class="space-y-2">
+            <div class="text-sm text-gray-600 bg-gray-50 rounded-lg px-3 py-2">"Que sabes sobre {empresa} en {ciudad}?"</div>
+            <div class="text-sm text-gray-600 bg-gray-50 rounded-lg px-3 py-2">"Donde esta ubicada {empresa}? Que servicios ofrece?"</div>
+            <div class="text-sm text-gray-600 bg-gray-50 rounded-lg px-3 py-2">"Cual es el horario y telefono de {empresa}?"</div>
+            <div class="text-sm text-gray-600 bg-gray-50 rounded-lg px-3 py-2">"Quien es el dueño o fundador de {empresa}?"</div>
+          </div>
+          <div class="mt-3 text-xs text-gray-400">Mide: precision de datos, nivel de conocimiento, alucinaciones</div>
+        </div>
+
+        <!-- Cat 2: Recomendacion -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm card-hover">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center">
+              <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+            </div>
+            <div>
+              <h3 class="font-bold">Recomendacion</h3>
+              <span class="text-xs text-gray-400">Te recomienda la IA?</span>
+            </div>
+          </div>
+          <div class="space-y-2">
+            <div class="text-sm text-gray-600 bg-gray-50 rounded-lg px-3 py-2">"Cual es la mejor {sector} en {ciudad}?"</div>
+            <div class="text-sm text-gray-600 bg-gray-50 rounded-lg px-3 py-2">"Necesito un {servicio} para {caso}. Que me recomiendas en {zona}?"</div>
+            <div class="text-sm text-gray-600 bg-gray-50 rounded-lg px-3 py-2">"Dame un top 5 de {sector} en {ciudad}"</div>
+            <div class="text-sm text-gray-600 bg-gray-50 rounded-lg px-3 py-2">"Donde puedo llevar a mi {mascota} de urgencia en {ciudad}?"</div>
+          </div>
+          <div class="mt-3 text-xs text-gray-400">Mide: posicion en ranking, frecuencia de mencion, contexto de recomendacion</div>
+        </div>
+
+        <!-- Cat 3: Comparativa -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm card-hover">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
+              <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            </div>
+            <div>
+              <h3 class="font-bold">Comparativa</h3>
+              <span class="text-xs text-gray-400">Tu vs la competencia</span>
+            </div>
+          </div>
+          <div class="space-y-2">
+            <div class="text-sm text-gray-600 bg-gray-50 rounded-lg px-3 py-2">"Que diferencia a {empresa} de {competidor}?"</div>
+            <div class="text-sm text-gray-600 bg-gray-50 rounded-lg px-3 py-2">"Es mejor {empresa} o {competidor} para {servicio}?"</div>
+            <div class="text-sm text-gray-600 bg-gray-50 rounded-lg px-3 py-2">"Compara precios entre {empresa} y {competidor}"</div>
+            <div class="text-sm text-gray-600 bg-gray-50 rounded-lg px-3 py-2">"Cual tiene mejores resenas, {empresa} o {competidor}?"</div>
+          </div>
+          <div class="mt-3 text-xs text-gray-400">Mide: ventajas/desventajas percibidas, posicionamiento relativo</div>
+        </div>
+
+        <!-- Cat 4: Reputacion -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm card-hover">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center">
+              <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+            </div>
+            <div>
+              <h3 class="font-bold">Reputacion</h3>
+              <span class="text-xs text-gray-400">Que opinion tiene la IA</span>
+            </div>
+          </div>
+          <div class="space-y-2">
+            <div class="text-sm text-gray-600 bg-gray-50 rounded-lg px-3 py-2">"Que opinan los clientes de {empresa}?"</div>
+            <div class="text-sm text-gray-600 bg-gray-50 rounded-lg px-3 py-2">"Tiene buena reputacion {empresa}?"</div>
+            <div class="text-sm text-gray-600 bg-gray-50 rounded-lg px-3 py-2">"Ha habido quejas o problemas con {empresa}?"</div>
+            <div class="text-sm text-gray-600 bg-gray-50 rounded-lg px-3 py-2">"Es confiable {empresa}? La recomendarias?"</div>
+          </div>
+          <div class="mt-3 text-xs text-gray-400">Mide: sentimiento, tono, fuentes citadas, sesgo</div>
+        </div>
+
+        <!-- Cat 5: Servicios -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm card-hover">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
+              <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+            </div>
+            <div>
+              <h3 class="font-bold">Servicios Especificos</h3>
+              <span class="text-xs text-gray-400">Conoce tus servicios?</span>
+            </div>
+          </div>
+          <div class="space-y-2">
+            <div class="text-sm text-gray-600 bg-gray-50 rounded-lg px-3 py-2">"Ofrece {empresa} servicio de {servicio_especifico}?"</div>
+            <div class="text-sm text-gray-600 bg-gray-50 rounded-lg px-3 py-2">"Que especialidades tiene {empresa}?"</div>
+            <div class="text-sm text-gray-600 bg-gray-50 rounded-lg px-3 py-2">"Atienden emergencias en {empresa}?"</div>
+            <div class="text-sm text-gray-600 bg-gray-50 rounded-lg px-3 py-2">"Que tecnologia o equipamiento tiene {empresa}?"</div>
+          </div>
+          <div class="mt-3 text-xs text-gray-400">Mide: cobertura de servicios conocidos, servicios inventados, lagunas</div>
+        </div>
+
+        <!-- Cat 6: Precio -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm card-hover">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-pink-100 flex items-center justify-center">
+              <svg class="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div>
+              <h3 class="font-bold">Precio y Accesibilidad</h3>
+              <span class="text-xs text-gray-400">Como percibe tu precio</span>
+            </div>
+          </div>
+          <div class="space-y-2">
+            <div class="text-sm text-gray-600 bg-gray-50 rounded-lg px-3 py-2">"Cuanto cuesta una consulta en {empresa}?"</div>
+            <div class="text-sm text-gray-600 bg-gray-50 rounded-lg px-3 py-2">"Es cara {empresa}? Hay opciones mas baratas?"</div>
+            <div class="text-sm text-gray-600 bg-gray-50 rounded-lg px-3 py-2">"Tiene {empresa} algun plan de financiacion o seguro?"</div>
+            <div class="text-sm text-gray-600 bg-gray-50 rounded-lg px-3 py-2">"Cual es la {sector} mas barata en {ciudad}?"</div>
+          </div>
+          <div class="mt-3 text-xs text-gray-400">Mide: percepcion de precio, relacion calidad-precio, accesibilidad</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider max-w-4xl mx-auto"></div>
+
+  <!-- Metricas -->
+  <section id="metricas" class="py-20 px-6">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-14">
+        <span class="tag bg-indigo-50 text-indigo-600">Metricas del Dashboard</span>
+        <h2 class="text-3xl font-bold mt-4 mb-3">12 metricas clave que se extraen</h2>
+        <p class="text-gray-500 max-w-2xl mx-auto">Cada respuesta de cada LLM se analiza para extraer estas metricas. Se muestran por LLM y como promedio.</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-5">
+        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm card-hover">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+            <span class="font-semibold text-sm">Sentiment Score</span>
+          </div>
+          <p class="text-xs text-gray-500">Puntuacion 0-100 del sentimiento general. Promedio de todas las respuestas. Positivo (>70), Neutro (40-70), Negativo (<40).</p>
+        </div>
+
+        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm card-hover">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+            <span class="font-semibold text-sm">Visibility Score</span>
+          </div>
+          <p class="text-xs text-gray-500">% de preguntas en las que la IA te menciona. 100% = siempre presente. <30% = practicamente invisible.</p>
+        </div>
+
+        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm card-hover">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-3 h-3 rounded-full bg-purple-500"></div>
+            <span class="font-semibold text-sm">Ranking Position</span>
+          </div>
+          <p class="text-xs text-gray-500">Posicion media cuando la IA lista multiples opciones. #1 = primera recomendacion, null = no aparece.</p>
+        </div>
+
+        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm card-hover">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+            <span class="font-semibold text-sm">Accuracy Score</span>
+          </div>
+          <p class="text-xs text-gray-500">% de datos factuales correctos (direccion, telefono, servicios, horarios). Detecta alucinaciones.</p>
+        </div>
+
+        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm card-hover">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+            <span class="font-semibold text-sm">Hallucination Rate</span>
+          </div>
+          <p class="text-xs text-gray-500">% de respuestas con informacion inventada (servicios que no existen, datos falsos). Critico detectarlo.</p>
+        </div>
+
+        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm card-hover">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-3 h-3 rounded-full bg-pink-500"></div>
+            <span class="font-semibold text-sm">Brand Intent</span>
+          </div>
+          <p class="text-xs text-gray-500">Intencion predominante: Informar, Recomendar, Advertir, Comparar, Disuadir. Muestra el "tono" de la IA.</p>
+        </div>
+
+        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm card-hover">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-3 h-3 rounded-full bg-teal-500"></div>
+            <span class="font-semibold text-sm">Topic Cloud</span>
+          </div>
+          <p class="text-xs text-gray-500">Nube de temas/atributos que la IA asocia a tu marca. Ej: "urgencias", "caro", "profesional", "moderno".</p>
+        </div>
+
+        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm card-hover">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-3 h-3 rounded-full bg-orange-500"></div>
+            <span class="font-semibold text-sm">Competitor Mentions</span>
+          </div>
+          <p class="text-xs text-gray-500">Cuantas veces y que competidores mencionan junto a ti. Quienes son tu "vecindario" en la mente de la IA.</p>
+        </div>
+
+        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm card-hover">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-3 h-3 rounded-full bg-cyan-500"></div>
+            <span class="font-semibold text-sm">Response Confidence</span>
+          </div>
+          <p class="text-xs text-gray-500">Nivel de seguridad con que la IA habla de ti. "Segun tengo entendido..." vs "Sin duda, es la mejor..."</p>
+        </div>
+
+        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm card-hover">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-3 h-3 rounded-full bg-lime-500"></div>
+            <span class="font-semibold text-sm">LLM Consistency</span>
+          </div>
+          <p class="text-xs text-gray-500">Que tan alineadas estan las respuestas de ChatGPT vs Gemini. Alta divergencia = la IA no tiene info clara.</p>
+        </div>
+
+        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm card-hover">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-3 h-3 rounded-full bg-violet-500"></div>
+            <span class="font-semibold text-sm">Recommendation Rate</span>
+          </div>
+          <p class="text-xs text-gray-500">% de preguntas de recomendacion donde la IA te elige activamente. El KPI mas importante para conversion.</p>
+        </div>
+
+        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm card-hover">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-3 h-3 rounded-full bg-gray-500"></div>
+            <span class="font-semibold text-sm">Knowledge Depth</span>
+          </div>
+          <p class="text-xs text-gray-500">Cuanta informacion detallada tiene la IA sobre ti. Superficial (solo nombre) vs Profundo (servicios, historia, equipo).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider max-w-4xl mx-auto"></div>
+
+  <!-- Dashboard Preview -->
+  <section id="dashboard" class="py-20 px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-14">
+        <span class="tag bg-violet-50 text-violet-600">Vista Previa</span>
+        <h2 class="text-3xl font-bold mt-4 mb-3">Asi se veria el Dashboard</h2>
+        <p class="text-gray-500 max-w-2xl mx-auto">Preview interactivo de como se presentarian los resultados del analisis.</p>
+      </div>
+
+      <!-- Dashboard Mock -->
+      <div class="bg-white rounded-3xl border border-gray-200 shadow-lg overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gray-50 border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+          <div>
+            <h3 class="font-bold text-lg">Veterinaria San Marcos</h3>
+            <p class="text-sm text-gray-500">Madrid, Chamberi &middot; Veterinaria &middot; Analisis del 13 Abr 2026</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="tag bg-emerald-100 text-emerald-700">Analisis completado</span>
+            <span class="text-xs text-gray-400">25 preguntas &middot; 2 LLMs &middot; 50 respuestas</span>
+          </div>
+        </div>
+
+        <!-- Score Cards -->
+        <div class="p-6">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-gradient-to-br from-emerald-50 to-emerald-100/50 rounded-2xl p-5 border border-emerald-100">
+              <div class="text-xs font-medium text-emerald-600 uppercase tracking-wide mb-1">Sentimiento</div>
+              <div class="text-3xl font-bold text-emerald-700">78<span class="text-lg">/100</span></div>
+              <div class="text-xs text-emerald-500 mt-1">+5 vs mes anterior</div>
+            </div>
+            <div class="bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-2xl p-5 border border-blue-100">
+              <div class="text-xs font-medium text-blue-600 uppercase tracking-wide mb-1">Visibilidad</div>
+              <div class="text-3xl font-bold text-blue-700">72<span class="text-lg">%</span></div>
+              <div class="text-xs text-blue-500 mt-1">18/25 preguntas mencionado</div>
+            </div>
+            <div class="bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-2xl p-5 border border-purple-100">
+              <div class="text-xs font-medium text-purple-600 uppercase tracking-wide mb-1">Ranking Medio</div>
+              <div class="text-3xl font-bold text-purple-700">#2.3</div>
+              <div class="text-xs text-purple-500 mt-1">Posicion en recomendaciones</div>
+            </div>
+            <div class="bg-gradient-to-br from-amber-50 to-amber-100/50 rounded-2xl p-5 border border-amber-100">
+              <div class="text-xs font-medium text-amber-600 uppercase tracking-wide mb-1">Precision</div>
+              <div class="text-3xl font-bold text-amber-700">65<span class="text-lg">%</span></div>
+              <div class="text-xs text-amber-500 mt-1">3 datos incorrectos detectados</div>
+            </div>
+          </div>
+
+          <!-- Comparativa LLMs -->
+          <div class="grid md:grid-cols-2 gap-6 mb-8">
+            <!-- ChatGPT -->
+            <div class="rounded-2xl border border-gray-200 overflow-hidden">
+              <div class="bg-emerald-50 px-5 py-3 flex items-center gap-2 border-b border-emerald-100">
+                <div class="w-6 h-6 rounded-full bg-emerald-500"></div>
+                <span class="font-semibold text-sm">ChatGPT (GPT-4.1)</span>
+              </div>
+              <div class="p-5 space-y-4">
+                <div>
+                  <div class="flex justify-between text-xs mb-1"><span class="text-gray-500">Sentimiento</span><span class="font-medium">82/100</span></div>
+                  <div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-emerald-500 h-2 rounded-full" style="width:82%"></div></div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs mb-1"><span class="text-gray-500">Visibilidad</span><span class="font-medium">80%</span></div>
+                  <div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-emerald-500 h-2 rounded-full" style="width:80%"></div></div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs mb-1"><span class="text-gray-500">Precision</span><span class="font-medium">70%</span></div>
+                  <div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-emerald-500 h-2 rounded-full" style="width:70%"></div></div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs mb-1"><span class="text-gray-500">Alucinaciones</span><span class="font-medium text-red-500">12%</span></div>
+                  <div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-red-400 h-2 rounded-full" style="width:12%"></div></div>
+                </div>
+                <div class="pt-2">
+                  <div class="text-xs font-medium text-gray-500 mb-2">Intencion predominante</div>
+                  <div class="flex gap-2">
+                    <span class="tag bg-emerald-100 text-emerald-700">Recomendar 60%</span>
+                    <span class="tag bg-blue-100 text-blue-700">Informar 30%</span>
+                    <span class="tag bg-gray-100 text-gray-600">Comparar 10%</span>
+                  </div>
+                </div>
+                <div class="pt-2">
+                  <div class="text-xs font-medium text-gray-500 mb-2">Temas asociados</div>
+                  <div class="flex flex-wrap gap-1.5">
+                    <span class="text-xs px-2 py-1 bg-indigo-50 text-indigo-600 rounded-md">urgencias 24h</span>
+                    <span class="text-xs px-2 py-1 bg-indigo-50 text-indigo-600 rounded-md">cirugia</span>
+                    <span class="text-xs px-2 py-1 bg-indigo-50 text-indigo-600 rounded-md">profesional</span>
+                    <span class="text-xs px-2 py-1 bg-amber-50 text-amber-600 rounded-md">precio alto</span>
+                    <span class="text-xs px-2 py-1 bg-indigo-50 text-indigo-600 rounded-md">experiencia</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Gemini -->
+            <div class="rounded-2xl border border-gray-200 overflow-hidden">
+              <div class="bg-blue-50 px-5 py-3 flex items-center gap-2 border-b border-blue-100">
+                <div class="w-6 h-6 rounded-full bg-blue-500"></div>
+                <span class="font-semibold text-sm">Gemini (2.5 Pro)</span>
+              </div>
+              <div class="p-5 space-y-4">
+                <div>
+                  <div class="flex justify-between text-xs mb-1"><span class="text-gray-500">Sentimiento</span><span class="font-medium">74/100</span></div>
+                  <div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-blue-500 h-2 rounded-full" style="width:74%"></div></div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs mb-1"><span class="text-gray-500">Visibilidad</span><span class="font-medium">64%</span></div>
+                  <div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-blue-500 h-2 rounded-full" style="width:64%"></div></div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs mb-1"><span class="text-gray-500">Precision</span><span class="font-medium">60%</span></div>
+                  <div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-blue-500 h-2 rounded-full" style="width:60%"></div></div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs mb-1"><span class="text-gray-500">Alucinaciones</span><span class="font-medium text-red-500">18%</span></div>
+                  <div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-red-400 h-2 rounded-full" style="width:18%"></div></div>
+                </div>
+                <div class="pt-2">
+                  <div class="text-xs font-medium text-gray-500 mb-2">Intencion predominante</div>
+                  <div class="flex gap-2">
+                    <span class="tag bg-blue-100 text-blue-700">Informar 50%</span>
+                    <span class="tag bg-emerald-100 text-emerald-700">Recomendar 30%</span>
+                    <span class="tag bg-amber-100 text-amber-700">Comparar 20%</span>
+                  </div>
+                </div>
+                <div class="pt-2">
+                  <div class="text-xs font-medium text-gray-500 mb-2">Temas asociados</div>
+                  <div class="flex flex-wrap gap-1.5">
+                    <span class="text-xs px-2 py-1 bg-blue-50 text-blue-600 rounded-md">clinica veterinaria</span>
+                    <span class="text-xs px-2 py-1 bg-blue-50 text-blue-600 rounded-md">Madrid</span>
+                    <span class="text-xs px-2 py-1 bg-blue-50 text-blue-600 rounded-md">atencion personalizada</span>
+                    <span class="text-xs px-2 py-1 bg-red-50 text-red-600 rounded-md">caro</span>
+                    <span class="text-xs px-2 py-1 bg-blue-50 text-blue-600 rounded-md">resenas positivas</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Alertas -->
+          <div class="bg-red-50 rounded-2xl p-5 border border-red-100 mb-8">
+            <h4 class="font-bold text-sm text-red-800 mb-3 flex items-center gap-2">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"/></svg>
+              Alertas de informacion incorrecta
+            </h4>
+            <div class="space-y-2">
+              <div class="flex items-start gap-3 bg-white rounded-lg p-3">
+                <div class="w-5 h-5 rounded-full bg-blue-500 flex-shrink-0 mt-0.5"></div>
+                <div>
+                  <span class="text-sm font-medium text-red-700">Gemini dice que tu telefono es 91-555-1234</span>
+                  <span class="text-xs text-gray-500 block">Tu telefono real es 91-888-5678. Dato incorrecto en 3 de 25 respuestas.</span>
+                </div>
+              </div>
+              <div class="flex items-start gap-3 bg-white rounded-lg p-3">
+                <div class="w-5 h-5 rounded-full bg-emerald-500 flex-shrink-0 mt-0.5"></div>
+                <div>
+                  <span class="text-sm font-medium text-red-700">ChatGPT dice que ofreces "servicio de peluqueria canina"</span>
+                  <span class="text-xs text-gray-500 block">No ofreces ese servicio. Alucinacion detectada en 2 respuestas.</span>
+                </div>
+              </div>
+              <div class="flex items-start gap-3 bg-white rounded-lg p-3">
+                <div class="w-5 h-5 rounded-full bg-blue-500 flex-shrink-0 mt-0.5"></div>
+                <div>
+                  <span class="text-sm font-medium text-amber-700">Gemini no conoce tu horario de fin de semana</span>
+                  <span class="text-xs text-gray-500 block">En 4 respuestas dice "consultar directamente" cuando preguntan por sabados.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Respuestas crudas -->
+          <div class="bg-gray-50 rounded-2xl p-5 border border-gray-200">
+            <h4 class="font-bold text-sm mb-4 flex items-center gap-2">
+              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              Respuestas crudas (ejemplo: pregunta #1)
+            </h4>
+            <div class="text-xs font-medium text-gray-500 mb-3 bg-white rounded-lg px-3 py-2 border border-gray-200">
+              Pregunta: "Que sabes sobre Veterinaria San Marcos en Madrid?"
+            </div>
+            <div class="grid md:grid-cols-2 gap-4">
+              <div class="bg-white rounded-xl p-4 border border-gray-200">
+                <div class="text-xs font-medium text-emerald-600 mb-2">ChatGPT:</div>
+                <p class="text-xs text-gray-600 leading-relaxed">"Veterinaria San Marcos es una clinica veterinaria ubicada en el barrio de Chamberi, Madrid. Fundada en 2005, se especializa en cirugia veterinaria y ofrece servicio de urgencias 24 horas. Cuenta con un equipo de 8 veterinarios y es conocida por su atencion personalizada. Segun resenas online, los clientes destacan su profesionalidad aunque algunos mencionan que los precios son superiores a la media de la zona."</p>
+                <div class="mt-2 flex gap-2">
+                  <span class="tag bg-emerald-50 text-emerald-600">Sent: 80</span>
+                  <span class="tag bg-amber-50 text-amber-600">1 dato incorrecto</span>
+                </div>
+              </div>
+              <div class="bg-white rounded-xl p-4 border border-gray-200">
+                <div class="text-xs font-medium text-blue-600 mb-2">Gemini:</div>
+                <p class="text-xs text-gray-600 leading-relaxed">"San Marcos es una veterinaria en Madrid. Segun la informacion disponible, ofrece servicios generales de veterinaria, incluyendo consultas, vacunacion y cirugia. Se encuentra en la zona de Chamberi. Los clientes en Google Maps le dan una puntuacion de 4.3/5, destacando la atencion al cliente y la limpieza de las instalaciones."</p>
+                <div class="mt-2 flex gap-2">
+                  <span class="tag bg-emerald-50 text-emerald-600">Sent: 72</span>
+                  <span class="tag bg-emerald-50 text-emerald-600">Datos correctos</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider max-w-4xl mx-auto"></div>
+
+  <!-- Arquitectura -->
+  <section id="arquitectura" class="py-20 px-6">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-14">
+        <span class="tag bg-gray-200 text-gray-700">Arquitectura Tecnica</span>
+        <h2 class="text-3xl font-bold mt-4 mb-3">Como se construye</h2>
+        <p class="text-gray-500 max-w-2xl mx-auto">Stack tecnologico, estructura de la base de datos y flujo de datos.</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-6 mb-8">
+        <!-- Stack -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+          <h3 class="font-bold text-lg mb-4">Stack Tecnologico</h3>
+          <div class="space-y-3">
+            <div class="flex items-center gap-3 bg-gray-50 rounded-lg px-4 py-3">
+              <span class="font-bold text-indigo-600 text-sm w-20">Frontend</span>
+              <span class="text-sm text-gray-600">React 18 + Vite + Tailwind CSS + Recharts</span>
+            </div>
+            <div class="flex items-center gap-3 bg-gray-50 rounded-lg px-4 py-3">
+              <span class="font-bold text-indigo-600 text-sm w-20">Backend</span>
+              <span class="text-sm text-gray-600">Node.js + Express.js</span>
+            </div>
+            <div class="flex items-center gap-3 bg-gray-50 rounded-lg px-4 py-3">
+              <span class="font-bold text-indigo-600 text-sm w-20">BD</span>
+              <span class="text-sm text-gray-600">PostgreSQL 16 (schema: llm_tracker)</span>
+            </div>
+            <div class="flex items-center gap-3 bg-gray-50 rounded-lg px-4 py-3">
+              <span class="font-bold text-indigo-600 text-sm w-20">ORM</span>
+              <span class="text-sm text-gray-600">Prisma</span>
+            </div>
+            <div class="flex items-center gap-3 bg-gray-50 rounded-lg px-4 py-3">
+              <span class="font-bold text-indigo-600 text-sm w-20">APIs IA</span>
+              <span class="text-sm text-gray-600">OpenAI API (GPT-4.1) + Google Gemini API (2.5 Pro)</span>
+            </div>
+            <div class="flex items-center gap-3 bg-gray-50 rounded-lg px-4 py-3">
+              <span class="font-bold text-indigo-600 text-sm w-20">Analisis</span>
+              <span class="text-sm text-gray-600">LLM analista (GPT-4.1-mini) para extraer metricas</span>
+            </div>
+            <div class="flex items-center gap-3 bg-gray-50 rounded-lg px-4 py-3">
+              <span class="font-bold text-indigo-600 text-sm w-20">Deploy</span>
+              <span class="text-sm text-gray-600">Docker multi-stage + Dokploy</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- DB Schema -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+          <h3 class="font-bold text-lg mb-4">Modelo de Datos (Prisma)</h3>
+          <div class="bg-gray-900 rounded-xl p-4 text-xs font-mono text-gray-300 overflow-x-auto">
+            <pre class="whitespace-pre leading-relaxed"><span class="text-purple-400">model</span> <span class="text-yellow-300">Business</span> {
+  id          Int       <span class="text-gray-500">@id @default(autoincrement())</span>
+  name        String
+  city        String
+  sector      String
+  website     String?
+  competitors String[]
+  analyses    Analysis[]
+}
+
+<span class="text-purple-400">model</span> <span class="text-yellow-300">Analysis</span> {
+  id          Int        <span class="text-gray-500">@id @default(autoincrement())</span>
+  businessId  Int
+  business    Business   <span class="text-gray-500">@relation(...)</span>
+  status      AnalysisStatus
+  totalScore  Float?
+  createdAt   DateTime   <span class="text-gray-500">@default(now())</span>
+  questions   Question[]
+  metrics     Metric[]
+}
+
+<span class="text-purple-400">model</span> <span class="text-yellow-300">Question</span> {
+  id          Int        <span class="text-gray-500">@id @default(autoincrement())</span>
+  analysisId  Int
+  category    String     <span class="text-gray-500">// recomendacion, reputacion...</span>
+  prompt      String
+  responses   Response[]
+}
+
+<span class="text-purple-400">model</span> <span class="text-yellow-300">Response</span> {
+  id            Int      <span class="text-gray-500">@id @default(autoincrement())</span>
+  questionId    Int
+  llmProvider   String   <span class="text-gray-500">// "openai" | "gemini"</span>
+  rawResponse   String
+  sentiment     Float?
+  position      Int?
+  accuracy      Float?
+  hallucination Boolean?
+  intent        String?
+  topics        String[]
+  confidence    Float?
+  tokensUsed    Int?
+  responseTime  Int?     <span class="text-gray-500">// ms</span>
+}</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flujo tecnico -->
+      <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+        <h3 class="font-bold text-lg mb-5">Flujo de ejecucion</h3>
+        <div class="flex flex-col md:flex-row items-start gap-3 text-sm">
+          <div class="flex-1 bg-indigo-50 rounded-xl p-4 text-center border border-indigo-100">
+            <div class="font-bold text-indigo-700 mb-1">1. Input</div>
+            <div class="text-xs text-indigo-600">Usuario envia formulario con datos del negocio</div>
+          </div>
+          <div class="hidden md:flex items-center text-indigo-300 text-2xl">→</div>
+          <div class="flex-1 bg-purple-50 rounded-xl p-4 text-center border border-purple-100">
+            <div class="font-bold text-purple-700 mb-1">2. Generate</div>
+            <div class="text-xs text-purple-600">GPT-4.1-mini genera 25 preguntas en 6 categorias</div>
+          </div>
+          <div class="hidden md:flex items-center text-purple-300 text-2xl">→</div>
+          <div class="flex-1 bg-emerald-50 rounded-xl p-4 text-center border border-emerald-100">
+            <div class="font-bold text-emerald-700 mb-1">3. Query</div>
+            <div class="text-xs text-emerald-600">Envio paralelo a OpenAI + Gemini (50 calls)</div>
+          </div>
+          <div class="hidden md:flex items-center text-emerald-300 text-2xl">→</div>
+          <div class="flex-1 bg-amber-50 rounded-xl p-4 text-center border border-amber-100">
+            <div class="font-bold text-amber-700 mb-1">4. Analyze</div>
+            <div class="text-xs text-amber-600">LLM analista extrae metricas de cada respuesta</div>
+          </div>
+          <div class="hidden md:flex items-center text-amber-300 text-2xl">→</div>
+          <div class="flex-1 bg-pink-50 rounded-xl p-4 text-center border border-pink-100">
+            <div class="font-bold text-pink-700 mb-1">5. Dashboard</div>
+            <div class="text-xs text-pink-600">Visualizacion con scores, alertas y comparativas</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider max-w-4xl mx-auto"></div>
+
+  <!-- API Endpoints -->
+  <section class="py-20 px-6">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-14">
+        <span class="tag bg-gray-200 text-gray-700">API</span>
+        <h2 class="text-3xl font-bold mt-4 mb-3">Endpoints del Backend</h2>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50 border-b border-gray-200">
+            <tr>
+              <th class="text-left px-5 py-3 font-semibold text-gray-600">Metodo</th>
+              <th class="text-left px-5 py-3 font-semibold text-gray-600">Endpoint</th>
+              <th class="text-left px-5 py-3 font-semibold text-gray-600">Descripcion</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <tr>
+              <td class="px-5 py-3"><span class="tag bg-emerald-100 text-emerald-700 font-mono">POST</span></td>
+              <td class="px-5 py-3 font-mono text-xs">/api/businesses</td>
+              <td class="px-5 py-3 text-gray-500">Crear/registrar un negocio a analizar</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3"><span class="tag bg-blue-100 text-blue-700 font-mono">GET</span></td>
+              <td class="px-5 py-3 font-mono text-xs">/api/businesses</td>
+              <td class="px-5 py-3 text-gray-500">Listar todos los negocios del usuario</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3"><span class="tag bg-emerald-100 text-emerald-700 font-mono">POST</span></td>
+              <td class="px-5 py-3 font-mono text-xs">/api/analyses</td>
+              <td class="px-5 py-3 text-gray-500">Lanzar un nuevo analisis (genera preguntas + consulta LLMs)</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3"><span class="tag bg-blue-100 text-blue-700 font-mono">GET</span></td>
+              <td class="px-5 py-3 font-mono text-xs">/api/analyses/:id</td>
+              <td class="px-5 py-3 text-gray-500">Ver resultados completos de un analisis</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3"><span class="tag bg-blue-100 text-blue-700 font-mono">GET</span></td>
+              <td class="px-5 py-3 font-mono text-xs">/api/analyses/:id/metrics</td>
+              <td class="px-5 py-3 text-gray-500">Metricas agregadas (scores, rankings, alertas)</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3"><span class="tag bg-blue-100 text-blue-700 font-mono">GET</span></td>
+              <td class="px-5 py-3 font-mono text-xs">/api/analyses/:id/responses</td>
+              <td class="px-5 py-3 text-gray-500">Respuestas crudas de cada LLM por pregunta</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3"><span class="tag bg-blue-100 text-blue-700 font-mono">GET</span></td>
+              <td class="px-5 py-3 font-mono text-xs">/api/analyses/:id/compare</td>
+              <td class="px-5 py-3 text-gray-500">Comparativa ChatGPT vs Gemini</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3"><span class="tag bg-blue-100 text-blue-700 font-mono">GET</span></td>
+              <td class="px-5 py-3 font-mono text-xs">/api/businesses/:id/history</td>
+              <td class="px-5 py-3 text-gray-500">Historico de analisis (evolucion temporal)</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3"><span class="tag bg-blue-100 text-blue-700 font-mono">GET</span></td>
+              <td class="px-5 py-3 font-mono text-xs">/api/health</td>
+              <td class="px-5 py-3 text-gray-500">Health check del servidor</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider max-w-4xl mx-auto"></div>
+
+  <!-- Coste estimado -->
+  <section class="py-20 px-6">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-14">
+        <span class="tag bg-green-50 text-green-600">Costes</span>
+        <h2 class="text-3xl font-bold mt-4 mb-3">Coste estimado por analisis</h2>
+        <p class="text-gray-500 max-w-2xl mx-auto">Cada analisis completo (25 preguntas x 2 LLMs + analisis) cuesta aproximadamente:</p>
+      </div>
+
+      <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
+        <div class="space-y-4">
+          <div class="flex items-center justify-between py-3 border-b border-gray-100">
+            <div>
+              <span class="font-medium">25 queries a OpenAI (GPT-4.1)</span>
+              <span class="text-xs text-gray-400 block">~500 tokens input + ~300 output por query</span>
+            </div>
+            <span class="font-bold text-gray-700">~$0.15</span>
+          </div>
+          <div class="flex items-center justify-between py-3 border-b border-gray-100">
+            <div>
+              <span class="font-medium">25 queries a Gemini (2.5 Pro)</span>
+              <span class="text-xs text-gray-400 block">~500 tokens input + ~300 output por query</span>
+            </div>
+            <span class="font-bold text-gray-700">~$0.10</span>
+          </div>
+          <div class="flex items-center justify-between py-3 border-b border-gray-100">
+            <div>
+              <span class="font-medium">Generacion de preguntas (GPT-4.1-mini)</span>
+              <span class="text-xs text-gray-400 block">1 call para generar las 25 preguntas</span>
+            </div>
+            <span class="font-bold text-gray-700">~$0.01</span>
+          </div>
+          <div class="flex items-center justify-between py-3 border-b border-gray-100">
+            <div>
+              <span class="font-medium">Analisis de 50 respuestas (GPT-4.1-mini)</span>
+              <span class="text-xs text-gray-400 block">50 calls para extraer metricas estructuradas</span>
+            </div>
+            <span class="font-bold text-gray-700">~$0.08</span>
+          </div>
+          <div class="flex items-center justify-between py-4 bg-indigo-50 rounded-xl px-4 -mx-4">
+            <span class="font-bold text-indigo-800 text-lg">Total por analisis completo</span>
+            <span class="font-bold text-indigo-700 text-2xl">~$0.34</span>
+          </div>
+        </div>
+        <p class="text-xs text-gray-400 mt-4 text-center">Precio aproximado basado en tarifas de abril 2026. Puede variar segun longitud de respuestas.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider max-w-4xl mx-auto"></div>
+
+  <!-- ============================================ -->
+  <!-- PANTALLAS DE CADA FUNCIONALIDAD              -->
+  <!-- ============================================ -->
+
+  <!-- PANTALLA 1: Analisis Programado / Evolucion Temporal -->
+  <section class="py-20 px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-10">
+        <span class="tag bg-indigo-50 text-indigo-600">Pantalla</span>
+        <h2 class="text-3xl font-bold mt-4 mb-3">Analisis Programado — Evolucion Temporal</h2>
+        <p class="text-gray-500 max-w-2xl mx-auto">Programa analisis automaticos y visualiza como cambia la percepcion de tu negocio semana a semana.</p>
+      </div>
+
+      <div class="bg-white rounded-3xl border border-gray-200 shadow-lg overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gray-50 border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <h3 class="font-bold">Evolucion Temporal — Veterinaria San Marcos</h3>
+          </div>
+          <div class="flex items-center gap-3">
+            <select class="text-xs border border-gray-200 rounded-lg px-3 py-1.5 bg-white">
+              <option>Ultimos 3 meses</option>
+              <option>Ultimos 6 meses</option>
+              <option>Ultimo ano</option>
+            </select>
+            <div class="flex items-center gap-2 px-3 py-1.5 bg-indigo-50 border border-indigo-200 rounded-lg">
+              <div class="w-2 h-2 rounded-full bg-emerald-500 pulse-dot"></div>
+              <span class="text-xs font-medium text-indigo-700">Programado: cada Lunes 9:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-6">
+          <!-- Config programacion -->
+          <div class="bg-indigo-50 rounded-2xl p-5 border border-indigo-100 mb-6">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+              <div>
+                <h4 class="font-bold text-sm text-indigo-800 mb-1">Configuracion de programacion</h4>
+                <p class="text-xs text-indigo-600">El analisis se ejecuta automaticamente y te notifica por email cuando termina.</p>
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="bg-white rounded-lg px-3 py-2 border border-indigo-200">
+                  <span class="text-xs text-gray-500">Frecuencia</span>
+                  <div class="font-semibold text-sm text-indigo-800">Semanal</div>
+                </div>
+                <div class="bg-white rounded-lg px-3 py-2 border border-indigo-200">
+                  <span class="text-xs text-gray-500">Dia</span>
+                  <div class="font-semibold text-sm text-indigo-800">Lunes</div>
+                </div>
+                <div class="bg-white rounded-lg px-3 py-2 border border-indigo-200">
+                  <span class="text-xs text-gray-500">Hora</span>
+                  <div class="font-semibold text-sm text-indigo-800">09:00</div>
+                </div>
+                <div class="bg-white rounded-lg px-3 py-2 border border-indigo-200">
+                  <span class="text-xs text-gray-500">Proximo</span>
+                  <div class="font-semibold text-sm text-indigo-800">14 Abr</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Grafico de evolucion (mock con barras CSS) -->
+          <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200 mb-6">
+            <div class="flex items-center justify-between mb-6">
+              <h4 class="font-bold text-sm">Evolucion del Sentiment Score</h4>
+              <div class="flex items-center gap-4 text-xs">
+                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> ChatGPT</span>
+                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-blue-500"></span> Gemini</span>
+                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-purple-500"></span> Promedio</span>
+              </div>
+            </div>
+            <!-- Chart area -->
+            <div class="flex items-end gap-3 h-48">
+              <!-- Semana 1 -->
+              <div class="flex-1 flex flex-col items-center gap-1">
+                <div class="w-full flex items-end justify-center gap-1" style="height:180px">
+                  <div class="w-4 bg-emerald-400 rounded-t-md" style="height:58%"></div>
+                  <div class="w-4 bg-blue-400 rounded-t-md" style="height:50%"></div>
+                  <div class="w-4 bg-purple-400 rounded-t-md" style="height:54%"></div>
+                </div>
+                <span class="text-xs text-gray-400">20 Ene</span>
+              </div>
+              <!-- Semana 2 -->
+              <div class="flex-1 flex flex-col items-center gap-1">
+                <div class="w-full flex items-end justify-center gap-1" style="height:180px">
+                  <div class="w-4 bg-emerald-400 rounded-t-md" style="height:62%"></div>
+                  <div class="w-4 bg-blue-400 rounded-t-md" style="height:52%"></div>
+                  <div class="w-4 bg-purple-400 rounded-t-md" style="height:57%"></div>
+                </div>
+                <span class="text-xs text-gray-400">27 Ene</span>
+              </div>
+              <!-- Semana 3 -->
+              <div class="flex-1 flex flex-col items-center gap-1">
+                <div class="w-full flex items-end justify-center gap-1" style="height:180px">
+                  <div class="w-4 bg-emerald-400 rounded-t-md" style="height:60%"></div>
+                  <div class="w-4 bg-blue-400 rounded-t-md" style="height:55%"></div>
+                  <div class="w-4 bg-purple-400 rounded-t-md" style="height:58%"></div>
+                </div>
+                <span class="text-xs text-gray-400">3 Feb</span>
+              </div>
+              <!-- Semana 4 -->
+              <div class="flex-1 flex flex-col items-center gap-1">
+                <div class="w-full flex items-end justify-center gap-1" style="height:180px">
+                  <div class="w-4 bg-emerald-400 rounded-t-md" style="height:68%"></div>
+                  <div class="w-4 bg-blue-400 rounded-t-md" style="height:58%"></div>
+                  <div class="w-4 bg-purple-400 rounded-t-md" style="height:63%"></div>
+                </div>
+                <span class="text-xs text-gray-400">10 Feb</span>
+              </div>
+              <!-- Semana 5 -->
+              <div class="flex-1 flex flex-col items-center gap-1">
+                <div class="w-full flex items-end justify-center gap-1" style="height:180px">
+                  <div class="w-4 bg-emerald-400 rounded-t-md" style="height:72%"></div>
+                  <div class="w-4 bg-blue-400 rounded-t-md" style="height:60%"></div>
+                  <div class="w-4 bg-purple-400 rounded-t-md" style="height:66%"></div>
+                </div>
+                <span class="text-xs text-gray-400">17 Feb</span>
+              </div>
+              <!-- Semana 6 -->
+              <div class="flex-1 flex flex-col items-center gap-1">
+                <div class="w-full flex items-end justify-center gap-1" style="height:180px">
+                  <div class="w-4 bg-emerald-400 rounded-t-md" style="height:70%"></div>
+                  <div class="w-4 bg-blue-400 rounded-t-md" style="height:62%"></div>
+                  <div class="w-4 bg-purple-400 rounded-t-md" style="height:66%"></div>
+                </div>
+                <span class="text-xs text-gray-400">24 Feb</span>
+              </div>
+              <!-- Semana 7 -->
+              <div class="flex-1 flex flex-col items-center gap-1">
+                <div class="w-full flex items-end justify-center gap-1" style="height:180px">
+                  <div class="w-4 bg-emerald-400 rounded-t-md" style="height:75%"></div>
+                  <div class="w-4 bg-blue-400 rounded-t-md" style="height:64%"></div>
+                  <div class="w-4 bg-purple-400 rounded-t-md" style="height:70%"></div>
+                </div>
+                <span class="text-xs text-gray-400">3 Mar</span>
+              </div>
+              <!-- Semana 8 -->
+              <div class="flex-1 flex flex-col items-center gap-1">
+                <div class="w-full flex items-end justify-center gap-1" style="height:180px">
+                  <div class="w-4 bg-emerald-400 rounded-t-md" style="height:78%"></div>
+                  <div class="w-4 bg-blue-400 rounded-t-md" style="height:66%"></div>
+                  <div class="w-4 bg-purple-400 rounded-t-md" style="height:72%"></div>
+                </div>
+                <span class="text-xs text-gray-400">10 Mar</span>
+              </div>
+              <!-- Semana 9 -->
+              <div class="flex-1 flex flex-col items-center gap-1">
+                <div class="w-full flex items-end justify-center gap-1" style="height:180px">
+                  <div class="w-4 bg-emerald-400 rounded-t-md" style="height:80%"></div>
+                  <div class="w-4 bg-blue-400 rounded-t-md" style="height:68%"></div>
+                  <div class="w-4 bg-purple-400 rounded-t-md" style="height:74%"></div>
+                </div>
+                <span class="text-xs text-gray-400">17 Mar</span>
+              </div>
+              <!-- Semana 10 -->
+              <div class="flex-1 flex flex-col items-center gap-1">
+                <div class="w-full flex items-end justify-center gap-1" style="height:180px">
+                  <div class="w-4 bg-emerald-400 rounded-t-md" style="height:82%"></div>
+                  <div class="w-4 bg-blue-400 rounded-t-md" style="height:74%"></div>
+                  <div class="w-4 bg-purple-400 rounded-t-md" style="height:78%"></div>
+                </div>
+                <span class="text-xs text-gray-400">7 Abr</span>
+              </div>
+            </div>
+            <div class="flex justify-between text-xs text-gray-400 mt-2 px-2">
+              <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
+            </div>
+          </div>
+
+          <!-- Historial de analisis -->
+          <h4 class="font-bold text-sm mb-3">Historial de analisis</h4>
+          <div class="space-y-2">
+            <div class="flex items-center justify-between bg-gray-50 rounded-xl px-5 py-3 border border-gray-100">
+              <div class="flex items-center gap-3">
+                <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+                <span class="text-sm font-medium">7 Abril 2026</span>
+                <span class="text-xs text-gray-400">Automatico</span>
+              </div>
+              <div class="flex items-center gap-4">
+                <span class="text-xs"><strong>Sentimiento:</strong> 78</span>
+                <span class="text-xs"><strong>Visibilidad:</strong> 72%</span>
+                <span class="text-xs"><strong>Ranking:</strong> #2.3</span>
+                <span class="tag bg-emerald-100 text-emerald-700">+5 pts</span>
+              </div>
+            </div>
+            <div class="flex items-center justify-between bg-gray-50 rounded-xl px-5 py-3 border border-gray-100">
+              <div class="flex items-center gap-3">
+                <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+                <span class="text-sm font-medium">31 Marzo 2026</span>
+                <span class="text-xs text-gray-400">Automatico</span>
+              </div>
+              <div class="flex items-center gap-4">
+                <span class="text-xs"><strong>Sentimiento:</strong> 73</span>
+                <span class="text-xs"><strong>Visibilidad:</strong> 68%</span>
+                <span class="text-xs"><strong>Ranking:</strong> #2.8</span>
+                <span class="tag bg-emerald-100 text-emerald-700">+3 pts</span>
+              </div>
+            </div>
+            <div class="flex items-center justify-between bg-gray-50 rounded-xl px-5 py-3 border border-gray-100">
+              <div class="flex items-center gap-3">
+                <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+                <span class="text-sm font-medium">24 Marzo 2026</span>
+                <span class="text-xs text-gray-400">Manual</span>
+              </div>
+              <div class="flex items-center gap-4">
+                <span class="text-xs"><strong>Sentimiento:</strong> 70</span>
+                <span class="text-xs"><strong>Visibilidad:</strong> 64%</span>
+                <span class="text-xs"><strong>Ranking:</strong> #3.1</span>
+                <span class="tag bg-red-100 text-red-700">-2 pts</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider max-w-4xl mx-auto"></div>
+
+  <!-- PANTALLA 2: Alertas por Email -->
+  <section class="py-20 px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-10">
+        <span class="tag bg-red-50 text-red-600">Pantalla</span>
+        <h2 class="text-3xl font-bold mt-4 mb-3">Alertas por Email</h2>
+        <p class="text-gray-500 max-w-2xl mx-auto">Recibe notificaciones automaticas cuando algo cambia en la percepcion de tu negocio.</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-6">
+        <!-- Config de alertas -->
+        <div class="bg-white rounded-3xl border border-gray-200 shadow-lg overflow-hidden">
+          <div class="bg-gray-50 border-b border-gray-200 px-6 py-4">
+            <h3 class="font-bold">Configuracion de Alertas</h3>
+            <p class="text-xs text-gray-400">Elige que eventos te notificamos por email</p>
+          </div>
+          <div class="p-6 space-y-4">
+            <!-- Alerta 1 -->
+            <div class="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
+                  <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+                </div>
+                <div>
+                  <span class="text-sm font-medium">Informacion incorrecta detectada</span>
+                  <span class="text-xs text-gray-400 block">Cuando la IA dice datos falsos sobre tu negocio</span>
+                </div>
+              </div>
+              <div class="w-10 h-6 bg-emerald-500 rounded-full relative"><div class="w-4 h-4 bg-white rounded-full absolute right-1 top-1"></div></div>
+            </div>
+            <!-- Alerta 2 -->
+            <div class="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
+                  <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/></svg>
+                </div>
+                <div>
+                  <span class="text-sm font-medium">Caida de sentimiento > 10 pts</span>
+                  <span class="text-xs text-gray-400 block">Cuando la percepcion baja significativamente</span>
+                </div>
+              </div>
+              <div class="w-10 h-6 bg-emerald-500 rounded-full relative"><div class="w-4 h-4 bg-white rounded-full absolute right-1 top-1"></div></div>
+            </div>
+            <!-- Alerta 3 -->
+            <div class="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                  <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/></svg>
+                </div>
+                <div>
+                  <span class="text-sm font-medium">Cambio en posicion de ranking</span>
+                  <span class="text-xs text-gray-400 block">Cuando subes o bajas en recomendaciones</span>
+                </div>
+              </div>
+              <div class="w-10 h-6 bg-emerald-500 rounded-full relative"><div class="w-4 h-4 bg-white rounded-full absolute right-1 top-1"></div></div>
+            </div>
+            <!-- Alerta 4 -->
+            <div class="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center">
+                  <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                </div>
+                <div>
+                  <span class="text-sm font-medium">Nuevo competidor detectado</span>
+                  <span class="text-xs text-gray-400 block">Cuando la IA empieza a mencionar un competidor nuevo</span>
+                </div>
+              </div>
+              <div class="w-10 h-6 bg-emerald-500 rounded-full relative"><div class="w-4 h-4 bg-white rounded-full absolute right-1 top-1"></div></div>
+            </div>
+            <!-- Alerta 5 -->
+            <div class="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center">
+                  <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <div>
+                  <span class="text-sm font-medium">Analisis completado</span>
+                  <span class="text-xs text-gray-400 block">Resumen semanal tras cada analisis programado</span>
+                </div>
+              </div>
+              <div class="w-10 h-6 bg-emerald-500 rounded-full relative"><div class="w-4 h-4 bg-white rounded-full absolute right-1 top-1"></div></div>
+            </div>
+
+            <div class="pt-2">
+              <label class="text-xs font-medium text-gray-500">Email de notificaciones</label>
+              <div class="mt-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm">alex@tuempresa.com</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Preview del email -->
+        <div class="bg-white rounded-3xl border border-gray-200 shadow-lg overflow-hidden">
+          <div class="bg-gray-50 border-b border-gray-200 px-6 py-4">
+            <h3 class="font-bold">Vista previa del email</h3>
+            <p class="text-xs text-gray-400">Asi se veria una alerta real en tu bandeja de entrada</p>
+          </div>
+          <div class="p-6">
+            <!-- Email mock -->
+            <div class="border border-gray-200 rounded-2xl overflow-hidden">
+              <!-- Email header -->
+              <div class="bg-gray-50 px-5 py-3 border-b border-gray-200">
+                <div class="flex items-center gap-2 mb-1">
+                  <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                    <span class="text-white text-xs font-bold">LT</span>
+                  </div>
+                  <div>
+                    <span class="text-sm font-semibold">LLM Brand Tracker</span>
+                    <span class="text-xs text-gray-400 block">alerts@llmtracker.app</span>
+                  </div>
+                </div>
+                <div class="text-sm font-medium mt-2 text-red-700">⚠ Alerta: Informacion incorrecta detectada sobre Veterinaria San Marcos</div>
+              </div>
+              <!-- Email body -->
+              <div class="px-5 py-4 space-y-4">
+                <p class="text-sm text-gray-700">Hola Alex,</p>
+                <p class="text-sm text-gray-600">En el analisis del <strong>7 de Abril 2026</strong> hemos detectado <strong class="text-red-600">2 datos incorrectos</strong> sobre tu negocio:</p>
+
+                <div class="bg-red-50 rounded-xl p-4 border border-red-100 space-y-3">
+                  <div class="flex items-start gap-2">
+                    <svg class="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"/></svg>
+                    <div>
+                      <span class="text-sm font-medium text-red-800">Gemini dice: telefono 91-555-1234</span>
+                      <span class="text-xs text-red-600 block">Tu telefono real: 91-888-5678</span>
+                    </div>
+                  </div>
+                  <div class="flex items-start gap-2">
+                    <svg class="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"/></svg>
+                    <div>
+                      <span class="text-sm font-medium text-red-800">ChatGPT inventa: "servicio de peluqueria canina"</span>
+                      <span class="text-xs text-red-600 block">Tu no ofreces ese servicio (alucinacion)</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
+                  <div class="text-sm font-medium text-emerald-800 mb-1">Resumen rapido</div>
+                  <div class="grid grid-cols-3 gap-3 text-center">
+                    <div>
+                      <div class="text-lg font-bold text-emerald-700">78</div>
+                      <div class="text-xs text-emerald-600">Sentimiento</div>
+                    </div>
+                    <div>
+                      <div class="text-lg font-bold text-emerald-700">#2</div>
+                      <div class="text-xs text-emerald-600">Ranking</div>
+                    </div>
+                    <div>
+                      <div class="text-lg font-bold text-emerald-700">72%</div>
+                      <div class="text-xs text-emerald-600">Visibilidad</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="text-center pt-2">
+                  <div class="inline-block px-5 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg">Ver analisis completo</div>
+                </div>
+
+                <div class="text-xs text-gray-400 text-center pt-2 border-t border-gray-100">
+                  LLM Brand Tracker &middot; Gestionar alertas &middot; Desuscribirse
+                </div>
+              </div>
+            </div>
+
+            <!-- Historial de alertas -->
+            <div class="mt-5">
+              <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Alertas recientes</h4>
+              <div class="space-y-2">
+                <div class="flex items-center gap-3 text-xs bg-gray-50 rounded-lg px-3 py-2">
+                  <div class="w-2 h-2 rounded-full bg-red-500"></div>
+                  <span class="text-gray-500">7 Abr</span>
+                  <span class="font-medium">Info incorrecta detectada (2 datos)</span>
+                </div>
+                <div class="flex items-center gap-3 text-xs bg-gray-50 rounded-lg px-3 py-2">
+                  <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+                  <span class="text-gray-500">7 Abr</span>
+                  <span class="font-medium">Analisis semanal completado — Score: 78</span>
+                </div>
+                <div class="flex items-center gap-3 text-xs bg-gray-50 rounded-lg px-3 py-2">
+                  <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+                  <span class="text-gray-500">31 Mar</span>
+                  <span class="font-medium">Ranking subio: #3.1 → #2.8</span>
+                </div>
+                <div class="flex items-center gap-3 text-xs bg-gray-50 rounded-lg px-3 py-2">
+                  <div class="w-2 h-2 rounded-full bg-purple-500"></div>
+                  <span class="text-gray-500">24 Mar</span>
+                  <span class="font-medium">Nuevo competidor: "Clinica Vets&Co" mencionado por Gemini</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider max-w-4xl mx-auto"></div>
+
+  <!-- PANTALLA 3: Multi-negocio -->
+  <section class="py-20 px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-10">
+        <span class="tag bg-purple-50 text-purple-600">Pantalla</span>
+        <h2 class="text-3xl font-bold mt-4 mb-3">Dashboard Multi-Negocio</h2>
+        <p class="text-gray-500 max-w-2xl mx-auto">Gestiona y compara todos tus negocios desde un solo lugar.</p>
+      </div>
+
+      <div class="bg-white rounded-3xl border border-gray-200 shadow-lg overflow-hidden">
+        <div class="bg-gray-50 border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+          <div>
+            <h3 class="font-bold">Mis Negocios</h3>
+            <p class="text-xs text-gray-400">4 negocios registrados &middot; 3 con analisis activo</p>
+          </div>
+          <div class="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg cursor-pointer">+ Anadir negocio</div>
+        </div>
+
+        <div class="p-6">
+          <!-- Cards de negocios -->
+          <div class="grid md:grid-cols-2 gap-5 mb-8">
+            <!-- Negocio 1 -->
+            <div class="rounded-2xl border border-gray-200 overflow-hidden card-hover">
+              <div class="bg-gradient-to-r from-emerald-50 to-emerald-100/30 px-5 py-3 border-b border-emerald-100 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-white font-bold">VS</div>
+                  <div>
+                    <span class="font-bold text-sm">Veterinaria San Marcos</span>
+                    <span class="text-xs text-gray-500 block">Madrid, Chamberi &middot; Veterinaria</span>
+                  </div>
+                </div>
+                <span class="tag bg-emerald-100 text-emerald-700">Activo</span>
+              </div>
+              <div class="p-4">
+                <div class="grid grid-cols-4 gap-3 text-center mb-3">
+                  <div><div class="text-lg font-bold text-emerald-600">78</div><div class="text-xs text-gray-400">Sentim.</div></div>
+                  <div><div class="text-lg font-bold text-blue-600">72%</div><div class="text-xs text-gray-400">Visibil.</div></div>
+                  <div><div class="text-lg font-bold text-purple-600">#2.3</div><div class="text-xs text-gray-400">Ranking</div></div>
+                  <div><div class="text-lg font-bold text-amber-600">65%</div><div class="text-xs text-gray-400">Precis.</div></div>
+                </div>
+                <div class="flex items-center justify-between text-xs text-gray-400">
+                  <span>Ultimo analisis: 7 Abr 2026</span>
+                  <span class="text-emerald-600 font-medium">+5 pts</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Negocio 2 -->
+            <div class="rounded-2xl border border-gray-200 overflow-hidden card-hover">
+              <div class="bg-gradient-to-r from-blue-50 to-blue-100/30 px-5 py-3 border-b border-blue-100 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center text-white font-bold">CR</div>
+                  <div>
+                    <span class="font-bold text-sm">Cafe Roma</span>
+                    <span class="text-xs text-gray-500 block">Barcelona, Eixample &middot; Cafeteria</span>
+                  </div>
+                </div>
+                <span class="tag bg-emerald-100 text-emerald-700">Activo</span>
+              </div>
+              <div class="p-4">
+                <div class="grid grid-cols-4 gap-3 text-center mb-3">
+                  <div><div class="text-lg font-bold text-emerald-600">85</div><div class="text-xs text-gray-400">Sentim.</div></div>
+                  <div><div class="text-lg font-bold text-blue-600">88%</div><div class="text-xs text-gray-400">Visibil.</div></div>
+                  <div><div class="text-lg font-bold text-purple-600">#1.2</div><div class="text-xs text-gray-400">Ranking</div></div>
+                  <div><div class="text-lg font-bold text-amber-600">90%</div><div class="text-xs text-gray-400">Precis.</div></div>
+                </div>
+                <div class="flex items-center justify-between text-xs text-gray-400">
+                  <span>Ultimo analisis: 7 Abr 2026</span>
+                  <span class="text-emerald-600 font-medium">+2 pts</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Negocio 3 -->
+            <div class="rounded-2xl border border-gray-200 overflow-hidden card-hover">
+              <div class="bg-gradient-to-r from-amber-50 to-amber-100/30 px-5 py-3 border-b border-amber-100 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center text-white font-bold">TF</div>
+                  <div>
+                    <span class="font-bold text-sm">Taller Fernandez</span>
+                    <span class="text-xs text-gray-500 block">Valencia, Ruzafa &middot; Taller mecanico</span>
+                  </div>
+                </div>
+                <span class="tag bg-emerald-100 text-emerald-700">Activo</span>
+              </div>
+              <div class="p-4">
+                <div class="grid grid-cols-4 gap-3 text-center mb-3">
+                  <div><div class="text-lg font-bold text-emerald-600">61</div><div class="text-xs text-gray-400">Sentim.</div></div>
+                  <div><div class="text-lg font-bold text-blue-600">45%</div><div class="text-xs text-gray-400">Visibil.</div></div>
+                  <div><div class="text-lg font-bold text-purple-600">#4.5</div><div class="text-xs text-gray-400">Ranking</div></div>
+                  <div><div class="text-lg font-bold text-amber-600">40%</div><div class="text-xs text-gray-400">Precis.</div></div>
+                </div>
+                <div class="flex items-center justify-between text-xs text-gray-400">
+                  <span>Ultimo analisis: 7 Abr 2026</span>
+                  <span class="text-red-600 font-medium">-3 pts</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Negocio 4 - sin analisis -->
+            <div class="rounded-2xl border border-dashed border-gray-300 overflow-hidden card-hover">
+              <div class="bg-gray-50 px-5 py-3 border-b border-gray-200 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-gray-300 flex items-center justify-center text-white font-bold">PL</div>
+                  <div>
+                    <span class="font-bold text-sm">Peluqueria Luna</span>
+                    <span class="text-xs text-gray-500 block">Sevilla, Triana &middot; Peluqueria</span>
+                  </div>
+                </div>
+                <span class="tag bg-gray-100 text-gray-500">Sin analizar</span>
+              </div>
+              <div class="p-4 flex items-center justify-center" style="min-height:100px">
+                <div class="text-center">
+                  <p class="text-sm text-gray-400 mb-2">Este negocio aun no tiene analisis</p>
+                  <div class="inline-block px-4 py-2 bg-indigo-50 text-indigo-600 text-xs font-medium rounded-lg">Lanzar primer analisis</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tabla comparativa -->
+          <h4 class="font-bold text-sm mb-3">Comparativa entre negocios</h4>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="text-left px-4 py-2.5 font-semibold text-gray-600 rounded-tl-xl">Negocio</th>
+                  <th class="text-center px-4 py-2.5 font-semibold text-gray-600">Sentimiento</th>
+                  <th class="text-center px-4 py-2.5 font-semibold text-gray-600">Visibilidad</th>
+                  <th class="text-center px-4 py-2.5 font-semibold text-gray-600">Ranking</th>
+                  <th class="text-center px-4 py-2.5 font-semibold text-gray-600">Precision</th>
+                  <th class="text-center px-4 py-2.5 font-semibold text-gray-600">Tendencia</th>
+                  <th class="text-center px-4 py-2.5 font-semibold text-gray-600 rounded-tr-xl">Estado</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-100">
+                <tr>
+                  <td class="px-4 py-3 font-medium">Cafe Roma</td>
+                  <td class="px-4 py-3 text-center"><span class="tag bg-emerald-100 text-emerald-700">85</span></td>
+                  <td class="px-4 py-3 text-center">88%</td>
+                  <td class="px-4 py-3 text-center font-bold text-purple-600">#1.2</td>
+                  <td class="px-4 py-3 text-center">90%</td>
+                  <td class="px-4 py-3 text-center text-emerald-600 font-medium">↑ +2</td>
+                  <td class="px-4 py-3 text-center"><span class="tag bg-emerald-50 text-emerald-600">Excelente</span></td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-3 font-medium">Vet. San Marcos</td>
+                  <td class="px-4 py-3 text-center"><span class="tag bg-emerald-100 text-emerald-700">78</span></td>
+                  <td class="px-4 py-3 text-center">72%</td>
+                  <td class="px-4 py-3 text-center font-bold text-purple-600">#2.3</td>
+                  <td class="px-4 py-3 text-center">65%</td>
+                  <td class="px-4 py-3 text-center text-emerald-600 font-medium">↑ +5</td>
+                  <td class="px-4 py-3 text-center"><span class="tag bg-blue-50 text-blue-600">Bueno</span></td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-3 font-medium">Taller Fernandez</td>
+                  <td class="px-4 py-3 text-center"><span class="tag bg-amber-100 text-amber-700">61</span></td>
+                  <td class="px-4 py-3 text-center">45%</td>
+                  <td class="px-4 py-3 text-center font-bold text-purple-600">#4.5</td>
+                  <td class="px-4 py-3 text-center">40%</td>
+                  <td class="px-4 py-3 text-center text-red-600 font-medium">↓ -3</td>
+                  <td class="px-4 py-3 text-center"><span class="tag bg-red-50 text-red-600">Requiere atencion</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider max-w-4xl mx-auto"></div>
+
+  <!-- PANTALLA 4: Reporte PDF -->
+  <section class="py-20 px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-10">
+        <span class="tag bg-emerald-50 text-emerald-600">Pantalla</span>
+        <h2 class="text-3xl font-bold mt-4 mb-3">Reporte PDF Exportable</h2>
+        <p class="text-gray-500 max-w-2xl mx-auto">Genera un informe profesional con un click para compartir con tu equipo o clientes.</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-6">
+        <!-- Configuracion del reporte -->
+        <div class="bg-white rounded-3xl border border-gray-200 shadow-lg overflow-hidden">
+          <div class="bg-gray-50 border-b border-gray-200 px-6 py-4">
+            <h3 class="font-bold">Generar Reporte</h3>
+            <p class="text-xs text-gray-400">Configura que incluir en el PDF</p>
+          </div>
+          <div class="p-6 space-y-4">
+            <div>
+              <label class="text-xs font-medium text-gray-500 uppercase tracking-wide">Negocio</label>
+              <div class="mt-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium">Veterinaria San Marcos</div>
+            </div>
+            <div>
+              <label class="text-xs font-medium text-gray-500 uppercase tracking-wide">Periodo</label>
+              <div class="mt-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm">Ultimo mes (Mar 7 — Abr 7, 2026)</div>
+            </div>
+            <div>
+              <label class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2 block">Secciones a incluir</label>
+              <div class="space-y-2">
+                <label class="flex items-center gap-2 text-sm"><input type="checkbox" checked class="rounded border-gray-300 text-indigo-600"> Resumen ejecutivo</label>
+                <label class="flex items-center gap-2 text-sm"><input type="checkbox" checked class="rounded border-gray-300 text-indigo-600"> Metricas por LLM (ChatGPT vs Gemini)</label>
+                <label class="flex items-center gap-2 text-sm"><input type="checkbox" checked class="rounded border-gray-300 text-indigo-600"> Grafico de evolucion temporal</label>
+                <label class="flex items-center gap-2 text-sm"><input type="checkbox" checked class="rounded border-gray-300 text-indigo-600"> Alertas de informacion incorrecta</label>
+                <label class="flex items-center gap-2 text-sm"><input type="checkbox" checked class="rounded border-gray-300 text-indigo-600"> Analisis de competidores</label>
+                <label class="flex items-center gap-2 text-sm"><input type="checkbox" checked class="rounded border-gray-300 text-indigo-600"> Nube de temas asociados</label>
+                <label class="flex items-center gap-2 text-sm"><input type="checkbox" checked class="rounded border-gray-300 text-indigo-600"> Respuestas crudas de cada LLM</label>
+                <label class="flex items-center gap-2 text-sm"><input type="checkbox" checked class="rounded border-gray-300 text-indigo-600"> Sugerencias de mejora</label>
+              </div>
+            </div>
+            <div>
+              <label class="text-xs font-medium text-gray-500 uppercase tracking-wide">Idioma</label>
+              <div class="mt-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm">Espanol</div>
+            </div>
+            <div class="pt-2">
+              <div class="w-full text-center px-5 py-3 bg-indigo-600 text-white text-sm font-medium rounded-xl">Descargar PDF</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Preview del PDF -->
+        <div class="bg-white rounded-3xl border border-gray-200 shadow-lg overflow-hidden">
+          <div class="bg-gray-50 border-b border-gray-200 px-6 py-4">
+            <h3 class="font-bold">Vista previa del PDF</h3>
+            <p class="text-xs text-gray-400">Pagina 1 — Resumen ejecutivo</p>
+          </div>
+          <div class="p-6">
+            <!-- PDF mock page -->
+            <div class="bg-white border-2 border-gray-200 rounded-xl shadow-md p-6" style="aspect-ratio: 210/297; max-height: 600px; overflow: hidden;">
+              <!-- PDF header -->
+              <div class="flex items-center justify-between border-b border-gray-200 pb-4 mb-4">
+                <div class="flex items-center gap-2">
+                  <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600"></div>
+                  <div>
+                    <div class="font-bold text-sm">LLM Brand Tracker</div>
+                    <div class="text-xs text-gray-400">Informe de Percepcion IA</div>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="text-xs text-gray-400">Fecha: 7 Abril 2026</div>
+                  <div class="text-xs text-gray-400">Periodo: Mar-Abr 2026</div>
+                </div>
+              </div>
+
+              <h3 class="font-bold text-lg mb-1">Veterinaria San Marcos</h3>
+              <p class="text-xs text-gray-400 mb-4">Madrid, Chamberi &middot; Sector: Veterinaria</p>
+
+              <div class="text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">Resumen Ejecutivo</div>
+
+              <div class="grid grid-cols-4 gap-2 mb-4">
+                <div class="bg-emerald-50 rounded-lg p-2 text-center">
+                  <div class="text-lg font-bold text-emerald-700">78</div>
+                  <div class="text-xs text-emerald-600">Sentimiento</div>
+                </div>
+                <div class="bg-blue-50 rounded-lg p-2 text-center">
+                  <div class="text-lg font-bold text-blue-700">72%</div>
+                  <div class="text-xs text-blue-600">Visibilidad</div>
+                </div>
+                <div class="bg-purple-50 rounded-lg p-2 text-center">
+                  <div class="text-lg font-bold text-purple-700">#2.3</div>
+                  <div class="text-xs text-purple-600">Ranking</div>
+                </div>
+                <div class="bg-amber-50 rounded-lg p-2 text-center">
+                  <div class="text-lg font-bold text-amber-700">65%</div>
+                  <div class="text-xs text-amber-600">Precision</div>
+                </div>
+              </div>
+
+              <div class="text-xs text-gray-600 leading-relaxed mb-3">
+                <p class="mb-2">Tu negocio muestra una <strong>tendencia positiva</strong> con una mejora de +5 puntos en sentimiento respecto al mes anterior. ChatGPT te percibe mejor (82) que Gemini (74).</p>
+                <p class="mb-2">Eres mencionado en el <strong>72% de las consultas relevantes</strong> y apareces en posicion <strong>#2 de media</strong> cuando los usuarios piden recomendaciones.</p>
+                <p>Se detectaron <strong class="text-red-600">2 datos incorrectos</strong> y <strong class="text-red-600">1 alucinacion</strong> que requieren atencion.</p>
+              </div>
+
+              <div class="text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">Comparativa ChatGPT vs Gemini</div>
+              <div class="grid grid-cols-2 gap-2 mb-3">
+                <div class="bg-emerald-50 rounded-lg p-2">
+                  <div class="text-xs font-semibold text-emerald-700 mb-1">ChatGPT</div>
+                  <div class="text-xs text-gray-600">Score: 82 &middot; Visib: 80% &middot; Rank: #1.8</div>
+                </div>
+                <div class="bg-blue-50 rounded-lg p-2">
+                  <div class="text-xs font-semibold text-blue-700 mb-1">Gemini</div>
+                  <div class="text-xs text-gray-600">Score: 74 &middot; Visib: 64% &middot; Rank: #2.8</div>
+                </div>
+              </div>
+
+              <div class="text-xs text-gray-300 text-center mt-4">Pagina 1 de 8</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider max-w-4xl mx-auto"></div>
+
+  <!-- PANTALLA 5: Sugerencias IA de Mejora -->
+  <section class="py-20 px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-10">
+        <span class="tag bg-amber-50 text-amber-600">Pantalla</span>
+        <h2 class="text-3xl font-bold mt-4 mb-3">Sugerencias IA de Mejora</h2>
+        <p class="text-gray-500 max-w-2xl mx-auto">La IA analiza tus resultados y genera un plan de accion concreto para mejorar tu percepcion.</p>
+      </div>
+
+      <div class="bg-white rounded-3xl border border-gray-200 shadow-lg overflow-hidden">
+        <div class="bg-gray-50 border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+          <div>
+            <h3 class="font-bold">Plan de Mejora — Veterinaria San Marcos</h3>
+            <p class="text-xs text-gray-400">Generado el 7 Abr 2026 basado en el ultimo analisis</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="tag bg-amber-100 text-amber-700">7 acciones recomendadas</span>
+          </div>
+        </div>
+
+        <div class="p-6">
+          <!-- Score actual y objetivo -->
+          <div class="grid md:grid-cols-3 gap-4 mb-8">
+            <div class="bg-gray-50 rounded-2xl p-5 border border-gray-200 text-center">
+              <div class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Score Actual</div>
+              <div class="text-4xl font-bold text-indigo-600">78</div>
+              <div class="text-xs text-gray-400 mt-1">Sentimiento promedio</div>
+            </div>
+            <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-5 border border-indigo-200 text-center">
+              <div class="text-xs font-medium text-indigo-600 uppercase tracking-wide mb-2">Score Objetivo</div>
+              <div class="text-4xl font-bold text-purple-600">90+</div>
+              <div class="text-xs text-indigo-500 mt-1">Alcanzable en 2-3 meses</div>
+            </div>
+            <div class="bg-emerald-50 rounded-2xl p-5 border border-emerald-200 text-center">
+              <div class="text-xs font-medium text-emerald-600 uppercase tracking-wide mb-2">Impacto Estimado</div>
+              <div class="text-4xl font-bold text-emerald-600">+12</div>
+              <div class="text-xs text-emerald-500 mt-1">Si aplicas todas las acciones</div>
+            </div>
+          </div>
+
+          <!-- Acciones -->
+          <div class="space-y-4">
+            <!-- Accion 1 - Critica -->
+            <div class="rounded-2xl border-2 border-red-200 overflow-hidden">
+              <div class="bg-red-50 px-5 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <span class="w-8 h-8 rounded-lg bg-red-500 text-white flex items-center justify-center font-bold text-sm">1</span>
+                  <div>
+                    <span class="font-bold text-sm text-red-800">Corregir datos incorrectos en internet</span>
+                    <span class="tag bg-red-200 text-red-800 ml-2">Critico</span>
+                  </div>
+                </div>
+                <span class="text-xs text-red-600 font-medium">Impacto: +4 pts</span>
+              </div>
+              <div class="px-5 py-4">
+                <p class="text-sm text-gray-600 mb-3">Gemini muestra un telefono incorrecto y ChatGPT inventa un servicio que no ofreces. Esto afecta directamente tu precision y confianza.</p>
+                <div class="bg-gray-50 rounded-xl p-4 space-y-2">
+                  <div class="flex items-start gap-2 text-sm">
+                    <span class="text-gray-400">1.</span>
+                    <span class="text-gray-700">Actualiza tu ficha de Google My Business con telefono, horarios y servicios correctos</span>
+                  </div>
+                  <div class="flex items-start gap-2 text-sm">
+                    <span class="text-gray-400">2.</span>
+                    <span class="text-gray-700">Verifica que tu web tiene schema markup (JSON-LD) con datos de contacto actualizados</span>
+                  </div>
+                  <div class="flex items-start gap-2 text-sm">
+                    <span class="text-gray-400">3.</span>
+                    <span class="text-gray-700">Actualiza directorios externos: Yelp, Paginas Amarillas, doctoralia.es</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Accion 2 - Alta -->
+            <div class="rounded-2xl border border-amber-200 overflow-hidden">
+              <div class="bg-amber-50 px-5 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <span class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center font-bold text-sm">2</span>
+                  <div>
+                    <span class="font-bold text-sm text-amber-800">Mejorar presencia de contenido online</span>
+                    <span class="tag bg-amber-200 text-amber-800 ml-2">Alta</span>
+                  </div>
+                </div>
+                <span class="text-xs text-amber-600 font-medium">Impacto: +3 pts</span>
+              </div>
+              <div class="px-5 py-4">
+                <p class="text-sm text-gray-600 mb-3">Los LLMs aprenden de contenido web. Cuanto mas contenido de calidad publiques, mejor te conoceran.</p>
+                <div class="bg-gray-50 rounded-xl p-4 space-y-2">
+                  <div class="flex items-start gap-2 text-sm">
+                    <span class="text-gray-400">1.</span>
+                    <span class="text-gray-700">Crea un blog con articulos sobre cuidado animal (al menos 2/mes)</span>
+                  </div>
+                  <div class="flex items-start gap-2 text-sm">
+                    <span class="text-gray-400">2.</span>
+                    <span class="text-gray-700">Publica casos de exito y testimonios detallados en tu web</span>
+                  </div>
+                  <div class="flex items-start gap-2 text-sm">
+                    <span class="text-gray-400">3.</span>
+                    <span class="text-gray-700">Anade una pagina "Sobre nosotros" con historia, equipo y especializaciones</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Accion 3 - Alta -->
+            <div class="rounded-2xl border border-amber-200 overflow-hidden">
+              <div class="bg-amber-50 px-5 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <span class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center font-bold text-sm">3</span>
+                  <div>
+                    <span class="font-bold text-sm text-amber-800">Aumentar resenas positivas</span>
+                    <span class="tag bg-amber-200 text-amber-800 ml-2">Alta</span>
+                  </div>
+                </div>
+                <span class="text-xs text-amber-600 font-medium">Impacto: +2 pts</span>
+              </div>
+              <div class="px-5 py-4">
+                <p class="text-sm text-gray-600 mb-3">Los LLMs citan resenas de Google como fuente principal. Mas resenas positivas = mejor percepcion.</p>
+                <div class="bg-gray-50 rounded-xl p-4 space-y-2">
+                  <div class="flex items-start gap-2 text-sm">
+                    <span class="text-gray-400">1.</span>
+                    <span class="text-gray-700">Implementa un sistema de solicitud de resenas post-visita (QR o email)</span>
+                  </div>
+                  <div class="flex items-start gap-2 text-sm">
+                    <span class="text-gray-400">2.</span>
+                    <span class="text-gray-700">Responde a TODAS las resenas (positivas y negativas) profesionalmente</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Accion 4 - Media -->
+            <div class="rounded-2xl border border-blue-200 overflow-hidden">
+              <div class="bg-blue-50 px-5 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <span class="w-8 h-8 rounded-lg bg-blue-500 text-white flex items-center justify-center font-bold text-sm">4</span>
+                  <div>
+                    <span class="font-bold text-sm text-blue-800">Diferenciarte de competidores con contenido unico</span>
+                    <span class="tag bg-blue-200 text-blue-800 ml-2">Media</span>
+                  </div>
+                </div>
+                <span class="text-xs text-blue-600 font-medium">Impacto: +1.5 pts</span>
+              </div>
+              <div class="px-5 py-4">
+                <p class="text-sm text-gray-600">Los LLMs te comparan con "Clinica Animal Plus" y "Veterinaria ABC". Destaca lo que te hace unico: urgencias 24h, equipo especializado en cirugia, anos de experiencia. Publicalo prominentemente en tu web.</p>
+              </div>
+            </div>
+
+            <!-- Accion 5 - Media -->
+            <div class="rounded-2xl border border-blue-200 overflow-hidden">
+              <div class="bg-blue-50 px-5 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <span class="w-8 h-8 rounded-lg bg-blue-500 text-white flex items-center justify-center font-bold text-sm">5</span>
+                  <div>
+                    <span class="font-bold text-sm text-blue-800">Abordar la percepcion de "precios altos"</span>
+                    <span class="tag bg-blue-200 text-blue-800 ml-2">Media</span>
+                  </div>
+                </div>
+                <span class="text-xs text-blue-600 font-medium">Impacto: +1 pt</span>
+              </div>
+              <div class="px-5 py-4">
+                <p class="text-sm text-gray-600">Ambos LLMs asocian tu marca con "precios altos" o "caro". Publica una pagina de precios transparente, destaca la relacion calidad-precio y menciona opciones de financiacion si las tienes.</p>
+              </div>
+            </div>
+
+            <!-- Accion 6 -->
+            <div class="rounded-2xl border border-gray-200 overflow-hidden">
+              <div class="bg-gray-50 px-5 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <span class="w-8 h-8 rounded-lg bg-gray-400 text-white flex items-center justify-center font-bold text-sm">6</span>
+                  <div>
+                    <span class="font-bold text-sm text-gray-700">Aparecer en medios y directorios especializados</span>
+                    <span class="tag bg-gray-200 text-gray-600 ml-2">Baja</span>
+                  </div>
+                </div>
+                <span class="text-xs text-gray-500 font-medium">Impacto: +0.5 pts</span>
+              </div>
+              <div class="px-5 py-4">
+                <p class="text-sm text-gray-600">Busca menciones en prensa local, blogs de mascotas y directorios del sector veterinario. Cada mencion es una fuente mas para que los LLMs aprendan sobre ti.</p>
+              </div>
+            </div>
+
+            <!-- Accion 7 -->
+            <div class="rounded-2xl border border-gray-200 overflow-hidden">
+              <div class="bg-gray-50 px-5 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <span class="w-8 h-8 rounded-lg bg-gray-400 text-white flex items-center justify-center font-bold text-sm">7</span>
+                  <div>
+                    <span class="font-bold text-sm text-gray-700">Optimizar SEO tecnico con datos estructurados</span>
+                    <span class="tag bg-gray-200 text-gray-600 ml-2">Baja</span>
+                  </div>
+                </div>
+                <span class="text-xs text-gray-500 font-medium">Impacto: +0.5 pts</span>
+              </div>
+              <div class="px-5 py-4">
+                <p class="text-sm text-gray-600">Implementa schema.org markup (LocalBusiness, VeterinaryCare) en tu web para que los crawlers de IA extraigan datos estructurados correctos automaticamente.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-gray-200 py-10 px-6">
+    <div class="max-w-4xl mx-auto text-center">
+      <div class="flex items-center justify-center gap-2 mb-3">
+        <div class="w-6 h-6 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        </div>
+        <span class="font-bold">LLM Brand Tracker</span>
+      </div>
+      <p class="text-sm text-gray-400">Documento de concepto — Abril 2026</p>
+      <p class="text-xs text-gray-300 mt-2">Stack: React + Vite + Express + PostgreSQL + OpenAI API + Gemini API</p>
+    </div>
+  </footer>
+
+</body>
+</html>
