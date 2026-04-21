@@ -23,7 +23,7 @@ services:
     environment:
       # Hostname interno del backend. En docker-compose local = "api" (nombre del servicio).
       # En EasyPanel servicios separados: poné el nombre interno del servicio backend.
-      API_HOST: ${API_HOST:-api}
+      API_UPSTREAM: ${API_UPSTREAM:-api:8000}
     depends_on:
       - api
     networks:

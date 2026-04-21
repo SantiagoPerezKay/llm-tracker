@@ -12,9 +12,11 @@ server {
     }
 
     # Proxy del API al backend
-    # API_HOST se inyecta como variable de entorno (default: "api")
+    # API_UPSTREAM = host:puerto  (sin http://)
+    # Ej local:     api:8000
+    # Ej EasyPanel: trabajo_apirest-llmtracker:80
     location /api {
-        set $backend http://${API_HOST}:8000;
+        set $backend http://${API_UPSTREAM};
         proxy_pass $backend;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
