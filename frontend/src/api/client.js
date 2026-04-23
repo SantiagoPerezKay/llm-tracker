@@ -33,11 +33,19 @@ export const api = {
   deleteBusiness: (id) =>
     request(`/api/businesses/${id}`, { method: 'DELETE' }),
 
-  // ── Analyses ──────────────────────────────────────────
-  createAnalysis: (businessId) =>
-    request('/api/analyses', {
+  // ── Questions ─────────────────────────────────────────
+  suggestQuestions: (businessId) =>
+    request('/api/questions/suggest', {
       method: 'POST',
       body: JSON.stringify({ business_id: businessId }),
+    }),
+
+  // ── Analyses ──────────────────────────────────────────
+  // questions: array de { category, prompt } — si se omite, la IA los genera
+  createAnalysis: (businessId, questions = null) =>
+    request('/api/analyses', {
+      method: 'POST',
+      body: JSON.stringify({ business_id: businessId, questions }),
     }),
 
   getAnalysisStatus: (id) =>

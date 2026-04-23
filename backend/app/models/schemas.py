@@ -56,8 +56,32 @@ class QuestionOut(BaseModel):
 
 # ── Analysis ─────────────────────────────────────────────
 
+# ── Sugerencia de preguntas ───────────────────────────────
+
+class QuestionInput(BaseModel):
+    """Pregunta individual enviada por el usuario al crear el análisis."""
+    category: QuestionCategory
+    prompt: str
+
+
+class CategorySuggestions(BaseModel):
+    """Preguntas sugeridas por la IA para una categoría."""
+    category: QuestionCategory
+    questions: list[str]
+
+
+class QuestionSuggestResponse(BaseModel):
+    business_id: int
+    suggestions: list[CategorySuggestions]
+
+
+# ── Analysis ─────────────────────────────────────────────
+
 class AnalysisCreate(BaseModel):
     business_id: int
+    # Si se proporcionan preguntas, se usan directamente (flujo con selección manual).
+    # Si es None, el runner las genera automáticamente (flujo legacy).
+    questions: list[QuestionInput] | None = None
 
 
 class LLMMetrics(BaseModel):

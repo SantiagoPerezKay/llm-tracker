@@ -17,10 +17,15 @@ from app.services.analyzer import analyze_all_responses, compute_global_scores
 logger = logging.getLogger(__name__)
 
 
-async def run_analysis(analysis_id: int, db: AsyncSession) -> None:
+async def run_analysis(
+    analysis_id: int,
+    db: AsyncSession,
+    preselected_questions: list[dict] | None = None,
+) -> None:
     """
     Pipeline completo. Se ejecuta en background.
-    Actualiza el estado de Analysis en cada paso.
+    - preselected_questions: lista de {category, prompt} ya validados por el usuario.
+      Si es None o vacío, las preguntas se generan automáticamente con IA.
     """
     from sqlalchemy import select
     from sqlalchemy.orm import selectinload
@@ -47,26 +52,38 @@ async def run_analysis(analysis_id: int, db: AsyncSession) -> None:
 
         logger.info(f"Starting analysis {analysis_id} for business '{business.name}'")
 
-        # ── Paso 1: Generar preguntas ──────────────────────────────────────────
+        # ── Paso 1: Obtener preguntas (manual o auto-generadas) ────────────────
         await update_status(AnalysisStatus.generating_questions)
 
-        questions_by_category = await generate_all_questions(
-            business_name=business.name,
-            city=business.city,
-            sector=business.sector,
-            competitors=business.competitors or [],
-        )
-
-        # Persistir preguntas
         all_question_texts: list[str] = []
         question_objects: list[Question] = []
 
-        for category, prompts in questions_by_category.items():
-            for prompt in prompts:
-                q = Question(analysis_id=analysis_id, category=category, prompt=prompt)
+        if preselected_questions:
+            # Flujo nuevo: preguntas elegidas por el usuario
+            logger.info(f"Using {len(preselected_questions)} pre-selected questions")
+            for item in preselected_questions:
+                q = Question(
+                    analysis_id=analysis_id,
+                    category=item["category"],
+                    prompt=item["prompt"],
+                )
                 db.add(q)
                 question_objects.append(q)
-                all_question_texts.append(prompt)
+                all_question_texts.append(item["prompt"])
+        else:
+            # Flujo legacy: generación automática con IA
+            questions_by_category = await generate_all_questions(
+                business_name=business.name,
+                city=business.city,
+                sector=business.sector,
+                competitors=business.competitors or [],
+            )
+            for category, prompts in questions_by_category.items():
+                for prompt in prompts:
+                    q = Question(analysis_id=analysis_id, category=category, prompt=prompt)
+                    db.add(q)
+                    question_objects.append(q)
+                    all_question_texts.append(prompt)
 
         await db.commit()
 

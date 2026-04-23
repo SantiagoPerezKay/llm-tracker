@@ -19,11 +19,18 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
-async def run_analysis_background(analysis_id: int):
+async def run_analysis_background(
+    analysis_id: int,
+    preselected_questions: list[dict] | None = None,
+):
     """Wrapper para ejecutar el análisis en background con su propia sesión de DB."""
     from app.services.analysis_runner import run_analysis
     async with AsyncSessionLocal() as db:
-        await run_analysis(analysis_id=analysis_id, db=db)
+        await run_analysis(
+            analysis_id=analysis_id,
+            db=db,
+            preselected_questions=preselected_questions,
+        )
 
 
 # ── CRUD básico ───────────────────────────────────────────
@@ -36,6 +43,7 @@ async def create_analysis(
 ):
     """
     Crea un análisis y lo lanza en background.
+    Si se envían preguntas pre-seleccionadas, se usan directamente (salteando la generación IA).
     El frontend hace polling a GET /analyses/{id}/status para ver el progreso.
     """
     result = await db.execute(select(Business).where(Business.id == data.business_id))
@@ -48,9 +56,19 @@ async def create_analysis(
     await db.commit()
     await db.refresh(analysis)
 
-    background_tasks.add_task(run_analysis_background, analysis.id)
+    # Convertir QuestionInput a dicts serializables para el background task
+    preselected = (
+        [{"category": q.category, "prompt": q.prompt} for q in data.questions]
+        if data.questions
+        else None
+    )
 
-    logger.info(f"Analysis {analysis.id} created and queued for business '{business.name}'")
+    background_tasks.add_task(run_analysis_background, analysis.id, preselected)
+
+    logger.info(
+        f"Analysis {analysis.id} created for business '{business.name}' "
+        f"({'manual questions' if preselected else 'auto-generate'})"
+    )
     return analysis
 
 
