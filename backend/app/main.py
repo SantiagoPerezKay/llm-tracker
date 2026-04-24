@@ -4,13 +4,23 @@ from contextlib import asynccontextmanager
 
 from app.core.database import engine, Base
 from app.routes import businesses, analyses, questions
+from app.routes import schedules
+from app.services.scheduler import start_scheduler, stop_scheduler
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Crear tablas al iniciar
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+
+    # Iniciar scheduler de análisis recurrentes
+    start_scheduler()
+
     yield
+
+    # Detener scheduler al apagar
+    stop_scheduler()
 
 
 app = FastAPI(
@@ -29,9 +39,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(businesses.router, prefix="/api/businesses", tags=["Businesses"])
-app.include_router(analyses.router, prefix="/api/analyses", tags=["Analyses"])
-app.include_router(questions.router, prefix="/api/questions", tags=["Questions"])
+app.include_router(businesses.router, prefix="/api/businesses",  tags=["Businesses"])
+app.include_router(analyses.router,   prefix="/api/analyses",    tags=["Analyses"])
+app.include_router(questions.router,  prefix="/api/questions",   tags=["Questions"])
+app.include_router(schedules.router,  prefix="/api/schedules",   tags=["Schedules"])
 
 
 @app.get("/api/health", tags=["Health"])

@@ -14,12 +14,12 @@ export default function MetricBar({ label, value, max = 100, color = 'indigo', i
   return (
     <div>
       <div className="flex justify-between text-xs mb-1">
-        <span className="text-gray-500">{label}</span>
-        <span className={`font-semibold ${inverted && value > 15 ? 'text-red-500' : 'text-gray-700'}`}>
+        <span className="text-gray-500 dark:text-gray-400">{label}</span>
+        <span className={`font-semibold ${inverted && value > 15 ? 'text-red-500' : 'text-gray-700 dark:text-gray-200'}`}>
           {display}
         </span>
       </div>
-      <div className="w-full bg-gray-100 rounded-full h-2">
+      <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2">
         <div
           className={`h-2 rounded-full transition-all duration-700 ${inverted ? 'bg-red-400' : (BAR[color] ?? BAR.indigo)}`}
           style={{ width: `${pct}%` }}

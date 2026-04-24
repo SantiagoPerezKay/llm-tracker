@@ -4,7 +4,7 @@ from typing import Optional
 
 from sqlalchemy import (
     Integer, String, Float, Boolean, DateTime, ForeignKey,
-    Enum, Text, ARRAY, func
+    Enum, Text, ARRAY, JSON, func
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -46,6 +46,7 @@ class Business(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
 
     analyses: Mapped[list["Analysis"]] = relationship("Analysis", back_populates="business", cascade="all, delete-orphan")
+    schedules: Mapped[list["ScheduledAnalysis"]] = relationship("ScheduledAnalysis", back_populates="business", cascade="all, delete-orphan")
 
 
 class Analysis(Base):
@@ -109,3 +110,23 @@ class Response(Base):
     competitor_mentions: Mapped[list[str]] = mapped_column(ARRAY(String), default=list)
 
     question: Mapped["Question"] = relationship("Question", back_populates="responses")
+
+
+class ScheduledAnalysis(Base):
+    __tablename__ = "scheduled_analyses"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    business_id: Mapped[int] = mapped_column(ForeignKey("businesses.id"), nullable=False)
+
+    # Lista de preguntas seleccionadas: [{"category": str, "prompt": str}]
+    questions: Mapped[list] = mapped_column(JSON, nullable=False)
+
+    # Frecuencia en horas (6, 12, 24, 72, 168, 336, 720)
+    interval_hours: Mapped[int] = mapped_column(Integer, nullable=False)
+
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    last_run_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+    next_run_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
+
+    business: Mapped["Business"] = relationship("Business", back_populates="schedules")

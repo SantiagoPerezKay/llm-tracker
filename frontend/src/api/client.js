@@ -62,4 +62,31 @@ export const api = {
 
   getAnalysisCompare: (id) =>
     request(`/api/analyses/${id}/compare`),
+
+  // ── Schedules ─────────────────────────────────────────
+  // Crea o reemplaza el schedule de un negocio
+  createSchedule: (businessId, questions, intervalHours) =>
+    request('/api/schedules', {
+      method: 'POST',
+      body: JSON.stringify({
+        business_id: businessId,
+        questions,
+        interval_hours: intervalHours,
+      }),
+    }),
+
+  getScheduleForBusiness: (businessId) =>
+    request(`/api/schedules/business/${businessId}`),
+
+  listSchedules: () =>
+    request('/api/schedules'),
+
+  updateSchedule: (scheduleId, data) =>
+    request(`/api/schedules/${scheduleId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    }),
+
+  deleteSchedule: (scheduleId) =>
+    request(`/api/schedules/${scheduleId}`, { method: 'DELETE' }),
 }

@@ -170,3 +170,38 @@ class ComparePayload(BaseModel):
     openai_metrics: LLMMetrics
     gemini_metrics: LLMMetrics
     questions: list[QuestionComparison]
+
+
+# ── Schedules ─────────────────────────────────────────────
+
+VALID_INTERVALS = {6, 12, 24, 72, 168, 336, 720}
+
+
+class ScheduleCreate(BaseModel):
+    business_id: int
+    questions: list[QuestionInput]
+    interval_hours: int
+
+    def validate_interval(self) -> None:
+        if self.interval_hours not in VALID_INTERVALS:
+            raise ValueError(f"interval_hours debe ser uno de: {sorted(VALID_INTERVALS)}")
+
+
+class ScheduleUpdate(BaseModel):
+    is_active: Optional[bool] = None
+    interval_hours: Optional[int] = None
+    questions: Optional[list[QuestionInput]] = None
+
+
+class ScheduleOut(BaseModel):
+    id: int
+    business_id: int
+    questions: list[dict]
+    interval_hours: int
+    is_active: bool
+    last_run_at: Optional[datetime]
+    next_run_at: datetime
+    created_at: datetime
+    business: Optional[BusinessOut] = None
+
+    model_config = {"from_attributes": True}
