@@ -1,9 +1,148 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useTheme } from '../context/ThemeContext'
 import { useAuth } from '../context/AuthContext'
 import { api } from '../api/client'
 
+// ── Helpers ────────────────────────────────────────────────
+function fmtCost(usd) {
+  if (usd === null || usd === undefined) return '—'
+  if (usd === 0) return '$0.00'
+  if (usd < 0.0001) return '< $0.0001'
+  if (usd < 1) return `$${usd.toFixed(4)}`
+  return `$${usd.toFixed(2)}`
+}
+
+function fmtInterval(hours) {
+  const map = { 6: 'Cada 6 h', 12: 'Cada 12 h', 24: 'Diario', 72: 'Cada 3 días', 168: 'Semanal', 336: 'Quincenal', 720: 'Mensual' }
+  return map[hours] ?? `Cada ${hours} h`
+}
+
+function fmtTokens(n) {
+  if (!n) return '0'
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}k`
+  return String(n)
+}
+
+// ── Cost dropdown ──────────────────────────────────────────
+function CostDropdown({ spending }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+
+  // Close on outside click
+  useEffect(() => {
+    function handle(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false)
+    }
+    if (open) document.addEventListener('mousedown', handle)
+    return () => document.removeEventListener('mousedown', handle)
+  }, [open])
+
+  const hasSchedules = spending?.active_schedules?.length > 0
+
+  return (
+    <div ref={ref} className="relative hidden sm:block">
+      {/* Trigger pill */}
+      <button
+        onClick={() => setOpen(o => !o)}
+        className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border transition-colors ${
+          open
+            ? 'bg-amber-100 dark:bg-amber-900/40 border-amber-300 dark:border-amber-700'
+            : 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800/40 hover:bg-amber-100 dark:hover:bg-amber-900/30'
+        }`}
+      >
+        <svg className="w-3 h-3 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clipRule="evenodd" />
+        </svg>
+        <span className="text-xs font-semibold text-amber-700 dark:text-amber-400">
+          {spending ? fmtCost(spending.total_cost_usd) : '…'}
+        </span>
+        <svg className={`w-3 h-3 text-amber-500 transition-transform ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      {/* Dropdown panel */}
+      {open && (
+        <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-xl ring-1 ring-black/5 dark:ring-white/5 z-50 overflow-hidden">
+
+          {/* Header — total */}
+          <div className="px-4 py-3 bg-amber-50 dark:bg-amber-900/20 border-b border-amber-100 dark:border-amber-800/40">
+            <p className="text-xs font-medium text-amber-600 dark:text-amber-400 uppercase tracking-wider mb-2">
+              Gasto total acumulado
+            </p>
+            <div className="flex items-end gap-3">
+              <span className="text-2xl font-bold text-amber-700 dark:text-amber-300">
+                {spending ? fmtCost(spending.total_cost_usd) : '—'}
+              </span>
+              <div className="flex flex-col pb-0.5">
+                <span className="text-xs text-amber-500 dark:text-amber-500">
+                  {spending?.total_analyses ?? 0} análisis
+                </span>
+                <span className="text-xs text-amber-500 dark:text-amber-500">
+                  {fmtTokens(spending?.total_tokens)} tokens
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Active schedules */}
+          <div className="px-4 py-3">
+            <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
+              Schedules activos
+            </p>
+
+            {!hasSchedules && (
+              <p className="text-xs text-gray-400 dark:text-gray-500 py-1">
+                No hay schedules activos.{' '}
+                <Link to="/schedules" onClick={() => setOpen(false)} className="text-indigo-500 hover:underline">
+                  Configurar →
+                </Link>
+              </p>
+            )}
+
+            {hasSchedules && (
+              <ul className="space-y-2">
+                {spending.active_schedules.map(s => (
+                  <li key={s.schedule_id} className="flex items-center justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">
+                        {s.business_name}
+                      </p>
+                      <p className="text-xs text-gray-400 dark:text-gray-500">
+                        {fmtInterval(s.interval_hours)} · {s.total_analyses} corridas
+                      </p>
+                    </div>
+                    <div className="text-right flex-shrink-0">
+                      <p className="text-sm font-semibold text-amber-600 dark:text-amber-400">
+                        {fmtCost(s.total_cost_usd)}
+                      </p>
+                      <p className="text-xs text-gray-400 dark:text-gray-500">histórico</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          {/* Footer */}
+          <div className="px-4 py-2 border-t border-gray-100 dark:border-gray-800">
+            <Link
+              to="/schedules"
+              onClick={() => setOpen(false)}
+              className="text-xs text-indigo-500 dark:text-indigo-400 hover:underline flex items-center gap-1"
+            >
+              Ver todos los schedules →
+            </Link>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ── Navbar ─────────────────────────────────────────────────
 export default function Navbar() {
   const { pathname } = useLocation()
   const navigate     = useNavigate()
@@ -14,27 +153,20 @@ export default function Navbar() {
 
   useEffect(() => {
     api.getSpending()
-      .then(data => setSpending(data))
+      .then(setSpending)
       .catch(() => {})
-  }, [pathname]) // re-fetch when navigating (after analyses complete)
+  }, [pathname])
 
   const handleLogout = () => {
     logout()
     navigate('/login', { replace: true })
   }
 
-  const formatCost = (usd) => {
-    if (usd === null || usd === undefined) return null
-    if (usd < 0.001) return '< $0.001'
-    if (usd < 1) return `$${usd.toFixed(4)}`
-    return `$${usd.toFixed(2)}`
-  }
-
   return (
     <nav className="sticky top-0 z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 transition-colors duration-200">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
 
-        {/* Logo */}
+        {/* ── Logo ── */}
         <Link to="/" className="flex items-center gap-2.5 flex-shrink-0">
           <img src="/assets/sembi-logo.webp" alt="Sembi logo" className="h-8 w-auto object-contain" />
           <span className="font-bold text-gray-900 dark:text-gray-50 text-base sm:text-lg leading-tight">
@@ -42,26 +174,11 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Actions */}
+        {/* ── Right side ── */}
         <div className="flex items-center gap-2 sm:gap-3">
 
-          {/* Total spending pill */}
-          {spending !== null && (
-            <Link
-              to="/schedules"
-              title={`${spending.total_analyses} análisis · ${spending.total_tokens?.toLocaleString()} tokens`}
-              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/40 rounded-full hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors"
-            >
-              <svg className="w-3 h-3 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clipRule="evenodd" />
-              </svg>
-              <span className="text-xs font-semibold text-amber-700 dark:text-amber-400">
-                {formatCost(spending.total_cost_usd)}
-              </span>
-              <span className="text-xs text-amber-500 dark:text-amber-500/70">total</span>
-            </Link>
-          )}
+          {/* Cost dropdown */}
+          <CostDropdown spending={spending} />
 
           {/* Provider pills */}
           <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 dark:bg-emerald-900/30 rounded-full">
@@ -110,10 +227,21 @@ export default function Navbar() {
             </svg>
           </Link>
 
-          {/* Username + logout */}
+          {/* New analysis CTA */}
+          {pathname !== '/nuevo' && (
+            <Link
+              to="/nuevo"
+              className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-xs sm:text-sm font-medium px-3 sm:px-4 py-2 rounded-lg hover:opacity-90 active:scale-95 transition-all whitespace-nowrap shadow-sm"
+            >
+              <span className="hidden sm:inline">+ Nuevo análisis</span>
+              <span className="sm:hidden">+</span>
+            </Link>
+          )}
+
+          {/* ── Username + logout — siempre al extremo derecho ── */}
           {username && (
-            <div className="hidden sm:flex items-center gap-2">
-              <span className="text-xs font-medium text-gray-500 dark:text-gray-400">{username}</span>
+            <div className="hidden sm:flex items-center gap-1.5 pl-1 border-l border-gray-200 dark:border-gray-700 ml-0.5">
+              <span className="text-xs font-medium text-gray-500 dark:text-gray-400 pl-1">{username}</span>
               <button
                 onClick={handleLogout}
                 title="Cerrar sesión"
@@ -125,17 +253,6 @@ export default function Navbar() {
                 </svg>
               </button>
             </div>
-          )}
-
-          {/* New analysis CTA */}
-          {pathname !== '/nuevo' && (
-            <Link
-              to="/nuevo"
-              className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-xs sm:text-sm font-medium px-3 sm:px-4 py-2 rounded-lg hover:opacity-90 active:scale-95 transition-all whitespace-nowrap shadow-sm"
-            >
-              <span className="hidden sm:inline">+ Nuevo análisis</span>
-              <span className="sm:hidden">+</span>
-            </Link>
           )}
         </div>
       </div>

@@ -21,19 +21,59 @@ router = APIRouter()
 
 @router.get("/spending")
 async def get_spending(db: AsyncSession = Depends(get_db)):
-    """Devuelve el gasto total acumulado de todos los análisis completados."""
-    result = await db.execute(
+    """
+    Gasto total acumulado de todos los análisis completados,
+    más el costo histórico desglosado por cada schedule activo.
+    """
+    from app.models.models import ScheduledAnalysis
+    from sqlalchemy.orm import selectinload as _sel
+
+    # ── Totales globales ──────────────────────────────────────
+    total_result = await db.execute(
         select(
             func.coalesce(func.sum(Analysis.total_cost_usd), 0.0),
             func.coalesce(func.sum(Analysis.total_tokens_used), 0),
             func.count(Analysis.id),
         ).where(Analysis.status == AnalysisStatus.completed)
     )
-    total_cost, total_tokens, total_analyses = result.one()
+    total_cost, total_tokens, total_analyses = total_result.one()
+
+    # ── Schedules activos ──────────────────────────────────────
+    sched_result = await db.execute(
+        select(ScheduledAnalysis)
+        .options(_sel(ScheduledAnalysis.business))
+        .where(ScheduledAnalysis.is_active.is_(True))
+        .order_by(ScheduledAnalysis.created_at.desc())
+    )
+    active_schedules = sched_result.scalars().all()
+
+    schedule_costs = []
+    for sched in active_schedules:
+        biz_result = await db.execute(
+            select(
+                func.coalesce(func.sum(Analysis.total_cost_usd), 0.0),
+                func.count(Analysis.id),
+            ).where(
+                Analysis.business_id == sched.business_id,
+                Analysis.status == AnalysisStatus.completed,
+            )
+        )
+        biz_cost, biz_count = biz_result.one()
+        schedule_costs.append({
+            "schedule_id": sched.id,
+            "business_id": sched.business_id,
+            "business_name": sched.business.name if sched.business else "—",
+            "interval_hours": sched.interval_hours,
+            "next_run_at": sched.next_run_at.isoformat() if sched.next_run_at else None,
+            "total_cost_usd": round(float(biz_cost), 6),
+            "total_analyses": int(biz_count),
+        })
+
     return {
         "total_cost_usd": round(float(total_cost), 6),
         "total_tokens": int(total_tokens),
         "total_analyses": int(total_analyses),
+        "active_schedules": schedule_costs,
     }
 
 
