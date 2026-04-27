@@ -90,6 +90,9 @@ export const api = {
   getAnalysisCompare: (id) =>
     request(`/api/analyses/${id}/compare`),
 
+  getSpending: () =>
+    request('/api/analyses/spending'),
+
   // ── Schedules ─────────────────────────────────────────
   // Crea o reemplaza el schedule de un negocio
   createSchedule: (businessId, questions, intervalHours) =>

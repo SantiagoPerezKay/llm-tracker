@@ -3,7 +3,7 @@ from collections import Counter
 
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.orm import selectinload
 
 from app.core.database import get_db, AsyncSessionLocal
@@ -17,6 +17,24 @@ from app.services.metrics import compute_llm_metrics, generate_recommendations
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
+
+
+@router.get("/spending")
+async def get_spending(db: AsyncSession = Depends(get_db)):
+    """Devuelve el gasto total acumulado de todos los análisis completados."""
+    result = await db.execute(
+        select(
+            func.coalesce(func.sum(Analysis.total_cost_usd), 0.0),
+            func.coalesce(func.sum(Analysis.total_tokens_used), 0),
+            func.count(Analysis.id),
+        ).where(Analysis.status == AnalysisStatus.completed)
+    )
+    total_cost, total_tokens, total_analyses = result.one()
+    return {
+        "total_cost_usd": round(float(total_cost), 6),
+        "total_tokens": int(total_tokens),
+        "total_analyses": int(total_analyses),
+    }
 
 
 async def run_analysis_background(

@@ -11,6 +11,10 @@ services:
       OPENAI_ANALYZER_MODEL: ${OPENAI_ANALYZER_MODEL:-gpt-4.1-mini}
       GEMINI_MODEL:          ${GEMINI_MODEL:-gemini-2.0-flash}
       DEBUG:                 ${DEBUG:-false}
+      # Auth
+      SECRET_KEY:            ${SECRET_KEY:-cambiar-en-produccion}
+      AUTH_USERNAME:         ${AUTH_USERNAME:-sembi2026}
+      AUTH_PASSWORD:         ${AUTH_PASSWORD:-test1234}
     networks:
       - dokploy-network
     restart: unless-stopped
