@@ -37,6 +37,8 @@ class LLMResponse:
     tokens_used: int | None
     response_time_ms: int
     error: str | None = None
+    input_tokens: int | None = None
+    output_tokens: int | None = None
 
 
 async def query_openai(question: str) -> LLMResponse:
@@ -62,6 +64,8 @@ async def query_openai(question: str) -> LLMResponse:
                 question=question,
                 raw_response=response.choices[0].message.content or "",
                 tokens_used=response.usage.total_tokens if response.usage else None,
+                input_tokens=response.usage.prompt_tokens if response.usage else None,
+                output_tokens=response.usage.completion_tokens if response.usage else None,
                 response_time_ms=elapsed_ms,
             )
         except asyncio.TimeoutError:
@@ -105,14 +109,20 @@ async def query_gemini(question: str) -> LLMResponse:
                 text = response.candidates[0].content.parts[0].text
 
             tokens = None
+            input_tok = None
+            output_tok = None
             if hasattr(response, "usage_metadata"):
                 tokens = response.usage_metadata.total_token_count
+                input_tok = getattr(response.usage_metadata, "prompt_token_count", None)
+                output_tok = getattr(response.usage_metadata, "candidates_token_count", None)
 
             return LLMResponse(
                 provider=LLMProvider.gemini,
                 question=question,
                 raw_response=text,
                 tokens_used=tokens,
+                input_tokens=input_tok,
+                output_tokens=output_tok,
                 response_time_ms=elapsed_ms,
             )
         except asyncio.TimeoutError:

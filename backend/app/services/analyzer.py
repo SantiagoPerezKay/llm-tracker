@@ -93,10 +93,13 @@ async def analyze_response(
     llm_response: LLMResponse,
     business_name: str,
     competitors: list[str],
-) -> AnalyzedMetrics:
-    """Analiza una respuesta individual y extrae las métricas."""
+) -> tuple[AnalyzedMetrics, int, int]:
+    """
+    Analiza una respuesta individual y extrae las métricas.
+    Devuelve (métricas, input_tokens_analyzer, output_tokens_analyzer).
+    """
     if llm_response.error and not llm_response.raw_response:
-        return _default_metrics()
+        return _default_metrics(), 0, 0
 
     async with _analysis_semaphore:
         try:
@@ -119,6 +122,9 @@ async def analyze_response(
                 max_tokens=500,
             )
 
+            inp = response.usage.prompt_tokens if response.usage else 0
+            out = response.usage.completion_tokens if response.usage else 0
+
             data = json.loads(response.choices[0].message.content)
 
             return AnalyzedMetrics(
@@ -131,32 +137,39 @@ async def analyze_response(
                 confidence=float(data.get("confidence", 0)),
                 topics=data.get("topics", []),
                 competitor_mentions=data.get("competitor_mentions", []),
-            )
+            ), inp, out
 
         except Exception as e:
             logger.error(f"Analysis error for {llm_response.provider}: {e}")
-            return _default_metrics()
+            return _default_metrics(), 0, 0
 
 
 async def analyze_all_responses(
     llm_responses: list[LLMResponse],
     business_name: str,
     competitors: list[str],
-) -> list[tuple[LLMResponse, AnalyzedMetrics]]:
-    """Analiza todas las respuestas en paralelo."""
+) -> list[tuple[LLMResponse, AnalyzedMetrics, int, int]]:
+    """
+    Analiza todas las respuestas en paralelo.
+    Devuelve lista de (respuesta, métricas, input_tokens_analyzer, output_tokens_analyzer).
+    """
     logger.info(f"Analyzing {len(llm_responses)} responses")
 
     tasks = [
         analyze_response(resp, business_name, competitors)
         for resp in llm_responses
     ]
-    metrics_list = await asyncio.gather(*tasks)
+    results = await asyncio.gather(*tasks)
 
-    return list(zip(llm_responses, metrics_list))
+    # results: list of (AnalyzedMetrics, int, int)
+    return [
+        (resp, metrics, inp, out)
+        for resp, (metrics, inp, out) in zip(llm_responses, results)
+    ]
 
 
 def compute_global_scores(
-    analyzed: list[tuple[LLMResponse, AnalyzedMetrics]],
+    analyzed: list[tuple[LLMResponse, AnalyzedMetrics, int, int]],
 ) -> dict:
     """
     Calcula los scores globales del análisis (promedios de todas las respuestas).
@@ -165,7 +178,7 @@ def compute_global_scores(
     if not analyzed:
         return {}
 
-    all_metrics = [m for _, m in analyzed]
+    all_metrics = [m for _, m, *_ in analyzed]
     n = len(all_metrics)
 
     def avg(values):
@@ -183,7 +196,7 @@ def compute_global_scores(
 
     from app.models.models import LLMProvider
     pairs_by_question: dict[str, dict] = {}
-    for resp, metrics in analyzed:
+    for resp, metrics, *_ in analyzed:
         q = resp.question
         if q not in pairs_by_question:
             pairs_by_question[q] = {}

@@ -21,6 +21,12 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: str
     GEMINI_MODEL: str = "gemini-2.5-pro"
 
+    # Auth
+    SECRET_KEY: str = "cambiar-en-produccion-usar-openssl-rand-hex-32"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7   # 7 días
+    AUTH_USERNAME: str = "sembi2026"
+    AUTH_PASSWORD: str = "test1234"
+
     # Analysis settings
     QUESTIONS_PER_CATEGORY: int = 4          # 6 categorías × 4 = 24 preguntas
     MAX_CONCURRENT_LLM_CALLS: int = 5        # con Gemini free tier: máx 5 paralelas

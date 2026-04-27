@@ -163,6 +163,16 @@ export default function HistoryPage() {
                     <Stat label="Score total" value={`${analysis.total_score?.toFixed(0) ?? '—'}/100`} />
                     <Stat label="Sentimiento" value={`${analysis.sentiment_score?.toFixed(0) ?? '—'}/100`} />
                     <Stat label="Visibilidad" value={`${analysis.visibility_score?.toFixed(0) ?? '—'}%`} />
+                    {analysis.total_cost_usd != null && (
+                      <Stat label="💰 Costo" value={`$${analysis.total_cost_usd.toFixed(4)}`} />
+                    )}
+                    {analysis.total_tokens_used != null && (
+                      <Stat label="Tokens" value={
+                        analysis.total_tokens_used >= 1000
+                          ? `${(analysis.total_tokens_used / 1000).toFixed(1)}k`
+                          : String(analysis.total_tokens_used)
+                      } />
+                    )}
                   </div>
                 )}
               </div>

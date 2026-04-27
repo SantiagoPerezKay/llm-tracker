@@ -29,6 +29,9 @@ class ResponseOut(BaseModel):
     llm_provider: LLMProvider
     raw_response: str
     tokens_used: Optional[int]
+    input_tokens: Optional[int]
+    output_tokens: Optional[int]
+    cost_usd: Optional[float]
     response_time_ms: Optional[int]
     sentiment: Optional[float]
     is_mentioned: Optional[bool]
@@ -125,6 +128,8 @@ class AnalysisSummary(BaseModel):
     total_score: Optional[float]
     sentiment_score: Optional[float]
     visibility_score: Optional[float]
+    total_cost_usd: Optional[float]
+    total_tokens_used: Optional[int]
     created_at: datetime
     completed_at: Optional[datetime]
 
@@ -132,6 +137,13 @@ class AnalysisSummary(BaseModel):
 
 
 # ── Métricas consolidadas (dashboard) ─────────────────────
+
+class TokenUsage(BaseModel):
+    """Resumen de tokens y costo del análisis"""
+    total_tokens: Optional[int]
+    total_cost_usd: Optional[float]
+    llm_breakdown: list[dict]  # [{provider, tokens, cost_usd}]
+
 
 class MetricsDashboard(BaseModel):
     analysis_id: int
@@ -142,6 +154,7 @@ class MetricsDashboard(BaseModel):
     top_topics: list[str]
     all_competitor_mentions: list[str]
     recommendations: list[str]
+    token_usage: Optional[TokenUsage] = None
 
 
 # ── Respuestas crudas ──────────────────────────────────────

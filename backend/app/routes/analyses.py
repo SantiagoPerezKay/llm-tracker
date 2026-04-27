@@ -11,7 +11,7 @@ from app.models.models import Analysis, Business, AnalysisStatus, Question, LLMP
 from app.models.schemas import (
     AnalysisCreate, AnalysisOut, AnalysisSummary,
     MetricsDashboard, ResponsesPayload, ComparePayload,
-    QuestionComparison, ResponseOut, BusinessOut,
+    QuestionComparison, ResponseOut, BusinessOut, TokenUsage,
 )
 from app.services.metrics import compute_llm_metrics, generate_recommendations
 
@@ -179,6 +179,25 @@ async def get_analysis_metrics(analysis_id: int, db: AsyncSession = Depends(get_
         analysis.business.name,
     )
 
+    # Resumen de tokens y costo por proveedor
+    from app.models.models import LLMProvider as LP
+    token_breakdown = []
+    for provider in [LP.openai, LP.gemini]:
+        provider_responses = [r for r in all_responses if r.llm_provider == provider]
+        tokens = sum((r.tokens_used or 0) for r in provider_responses)
+        cost = sum((r.cost_usd or 0.0) for r in provider_responses)
+        token_breakdown.append({
+            "provider": provider.value,
+            "tokens": tokens,
+            "cost_usd": round(cost, 8),
+        })
+
+    token_usage = TokenUsage(
+        total_tokens=analysis.total_tokens_used,
+        total_cost_usd=analysis.total_cost_usd,
+        llm_breakdown=token_breakdown,
+    )
+
     return MetricsDashboard(
         analysis_id=analysis_id,
         business=BusinessOut.model_validate(analysis.business),
@@ -188,6 +207,7 @@ async def get_analysis_metrics(analysis_id: int, db: AsyncSession = Depends(get_
         top_topics=top_topics,
         all_competitor_mentions=list(set(all_competitors)),
         recommendations=recommendations,
+        token_usage=token_usage,
     )
 
 

@@ -13,6 +13,8 @@ from app.models.models import (
 from app.services.question_generator import generate_all_questions
 from app.services.llm_client import query_all_questions, LLMResponse
 from app.services.analyzer import analyze_all_responses, compute_global_scores
+from app.services.pricing import calculate_cost
+from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -115,14 +117,27 @@ async def run_analysis(
             competitors=business.competitors or [],
         )
 
-        # ── Paso 4: Persistir respuestas con métricas ─────────────────────────
-        for i, (llm_response, metrics) in enumerate(analyzed):
+        # ── Paso 4: Persistir respuestas con métricas y costos ───────────────
+        total_llm_tokens = 0
+        total_llm_cost = 0.0
+        total_analyzer_input = 0
+        total_analyzer_output = 0
+
+        for i, (llm_response, metrics, analyzer_inp, analyzer_out) in enumerate(analyzed):
             _, q_id = all_responses[i]
+
+            # Costo de esta llamada LLM individual
+            model = settings.OPENAI_MODEL if llm_response.provider.value == "openai" else settings.GEMINI_MODEL
+            response_cost = calculate_cost(model, llm_response.input_tokens, llm_response.output_tokens)
+
             resp = Response(
                 question_id=q_id,
                 llm_provider=llm_response.provider,
                 raw_response=llm_response.raw_response,
                 tokens_used=llm_response.tokens_used,
+                input_tokens=llm_response.input_tokens,
+                output_tokens=llm_response.output_tokens,
+                cost_usd=response_cost if response_cost > 0 else None,
                 response_time_ms=llm_response.response_time_ms,
                 sentiment=metrics.sentiment,
                 is_mentioned=metrics.is_mentioned,
@@ -136,8 +151,26 @@ async def run_analysis(
             )
             db.add(resp)
 
+            total_llm_tokens += llm_response.tokens_used or 0
+            total_llm_cost += response_cost
+            total_analyzer_input += analyzer_inp
+            total_analyzer_output += analyzer_out
+
         await db.commit()
         logger.info(f"Persisted {len(analyzed)} responses with metrics")
+
+        # Costo del analyzer (GPT-4.1-mini analizando cada respuesta)
+        analyzer_cost = calculate_cost(
+            settings.OPENAI_ANALYZER_MODEL, total_analyzer_input, total_analyzer_output
+        )
+
+        total_cost = round(total_llm_cost + analyzer_cost, 8)
+        total_tokens = total_llm_tokens + total_analyzer_input + total_analyzer_output
+
+        logger.info(
+            f"Token usage — LLM: {total_llm_tokens}, Analyzer: {total_analyzer_input + total_analyzer_output} | "
+            f"Cost — LLM: ${total_llm_cost:.6f}, Analyzer: ${analyzer_cost:.6f}, Total: ${total_cost:.6f}"
+        )
 
         # ── Paso 5: Calcular y persistir scores globales ──────────────────────
         global_scores = compute_global_scores(analyzed)
@@ -147,6 +180,9 @@ async def run_analysis(
 
         for key, value in global_scores.items():
             setattr(analysis, key, value)
+
+        analysis.total_tokens_used = total_tokens
+        analysis.total_cost_usd = total_cost
 
         await update_status(AnalysisStatus.completed)
         logger.info(f"Analysis {analysis_id} completed. Total score: {global_scores.get('total_score')}")

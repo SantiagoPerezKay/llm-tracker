@@ -1,9 +1,29 @@
+const TOKEN_KEY = 'llm_tracker_token'
+
+function getToken() {
+  return localStorage.getItem(TOKEN_KEY)
+}
+
 // Usa URLs relativas: Vite proxy en dev, nginx proxy en Docker
 async function request(path, options = {}) {
+  const token = getToken()
+
   const res = await fetch(path, {
-    headers: { 'Content-Type': 'application/json', ...options.headers },
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...options.headers,
+    },
     ...options,
   })
+
+  // Token expirado o inválido → redirigir a login
+  if (res.status === 401) {
+    localStorage.removeItem(TOKEN_KEY)
+    localStorage.removeItem('llm_tracker_user')
+    window.location.href = '/login'
+    return
+  }
 
   if (res.status === 204) return null
 
@@ -17,6 +37,13 @@ async function request(path, options = {}) {
 }
 
 export const api = {
+  // ── Auth ──────────────────────────────────────────────
+  login: (username, password) =>
+    request('/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ username, password }),
+    }),
+
   // ── Businesses ────────────────────────────────────────
   getBusinesses: () =>
     request('/api/businesses'),

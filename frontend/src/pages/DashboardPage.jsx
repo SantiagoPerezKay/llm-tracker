@@ -14,12 +14,12 @@ const TABS = [
 ]
 
 const INTENT_COLORS = {
-  recomendar: 'bg-emerald-100 text-emerald-700',
-  informar:   'bg-blue-100 text-blue-700',
-  comparar:   'bg-amber-100 text-amber-700',
-  advertir:   'bg-orange-100 text-orange-700',
-  disuadir:   'bg-red-100 text-red-700',
-  desconocer: 'bg-gray-100 text-gray-600',
+  recomendar: 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300',
+  informar:   'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300',
+  comparar:   'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300',
+  advertir:   'bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300',
+  disuadir:   'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300',
+  desconocer: 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400',
 }
 
 const CATEGORY_LABELS = {
@@ -32,12 +32,12 @@ const CATEGORY_LABELS = {
 }
 
 const CATEGORY_COLORS = {
-  conocimiento:  'bg-blue-50 text-blue-700',
-  recomendacion: 'bg-emerald-50 text-emerald-700',
-  comparativa:   'bg-amber-50 text-amber-700',
-  reputacion:    'bg-red-50 text-red-600',
-  servicios:     'bg-purple-50 text-purple-700',
-  precio:        'bg-pink-50 text-pink-700',
+  conocimiento:  'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300',
+  recomendacion: 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300',
+  comparativa:   'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300',
+  reputacion:    'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-300',
+  servicios:     'bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300',
+  precio:        'bg-pink-50 dark:bg-pink-900/20 text-pink-700 dark:text-pink-300',
 }
 
 export default function DashboardPage() {
@@ -303,6 +303,10 @@ function ResumenTab({ metrics, openaiLlm, geminiLlm, gs }) {
           </div>
         </div>
       )}
+
+      {metrics.token_usage && (
+        <TokenUsagePanel usage={metrics.token_usage} />
+      )}
     </div>
   )
 }
@@ -316,12 +320,12 @@ function LLMPanel({ provider, llm }) {
   const textCls  = isOpenAI ? 'text-emerald-800 dark:text-emerald-200' : 'text-blue-800 dark:text-blue-200'
 
   const INTENT_COLORS = {
-    recomendar: 'bg-emerald-100 text-emerald-700',
-    informar:   'bg-blue-100 text-blue-700',
-    comparar:   'bg-amber-100 text-amber-700',
-    advertir:   'bg-orange-100 text-orange-700',
-    disuadir:   'bg-red-100 text-red-700',
-    desconocer: 'bg-gray-100 text-gray-600',
+    recomendar: 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300',
+    informar:   'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300',
+    comparar:   'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300',
+    advertir:   'bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300',
+    disuadir:   'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300',
+    desconocer: 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400',
   }
 
   if (!llm) return (
@@ -467,12 +471,12 @@ function ResponseCell({ response, provider }) {
   const tagCls   = isOpenAI ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-200' : 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-200'
 
   const INTENT_COLORS = {
-    recomendar: 'bg-emerald-100 text-emerald-700',
-    informar:   'bg-blue-100 text-blue-700',
-    comparar:   'bg-amber-100 text-amber-700',
-    advertir:   'bg-orange-100 text-orange-700',
-    disuadir:   'bg-red-100 text-red-700',
-    desconocer: 'bg-gray-100 text-gray-600',
+    recomendar: 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300',
+    informar:   'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300',
+    comparar:   'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300',
+    advertir:   'bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300',
+    disuadir:   'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300',
+    desconocer: 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400',
   }
 
   if (!response) return (
@@ -578,12 +582,12 @@ function FullResponseCell({ response, provider }) {
   const tagCls   = isOpenAI ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-200' : 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-200'
 
   const INTENT_COLORS = {
-    recomendar: 'bg-emerald-100 text-emerald-700',
-    informar:   'bg-blue-100 text-blue-700',
-    comparar:   'bg-amber-100 text-amber-700',
-    advertir:   'bg-orange-100 text-orange-700',
-    disuadir:   'bg-red-100 text-red-700',
-    desconocer: 'bg-gray-100 text-gray-600',
+    recomendar: 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300',
+    informar:   'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300',
+    comparar:   'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300',
+    advertir:   'bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300',
+    disuadir:   'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300',
+    desconocer: 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400',
   }
 
   return (
@@ -628,5 +632,99 @@ function Tag({ label, value, cls }) {
     <span className={`px-2 py-0.5 rounded text-xs font-medium ${cls}`}>
       {label ? `${label}: ${value}` : value}
     </span>
+  )
+}
+
+function formatCost(usd) {
+  if (usd === null || usd === undefined) return '—'
+  if (usd === 0) return '$0.0000'
+  if (usd < 0.01) return `$${usd.toFixed(4)}`
+  return `$${usd.toFixed(4)}`
+}
+
+function formatTokens(n) {
+  if (!n) return '—'
+  return n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n)
+}
+
+function TokenUsagePanel({ usage }) {
+  const openai = usage.llm_breakdown?.find(b => b.provider === 'openai')
+  const gemini = usage.llm_breakdown?.find(b => b.provider === 'gemini')
+
+  return (
+    <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-6">
+      <h3 className="font-semibold text-gray-800 dark:text-gray-100 mb-4 flex items-center gap-2">
+        <svg className="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        Tokens y costo del análisis
+      </h3>
+
+      {/* Totales */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-5">
+        <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-4 border border-amber-100 dark:border-amber-800/50">
+          <div className="text-xs font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wide mb-1">
+            Costo total
+          </div>
+          <div className="text-2xl font-bold text-amber-700 dark:text-amber-300">
+            {formatCost(usage.total_cost_usd)}
+          </div>
+          <div className="text-xs text-amber-500 dark:text-amber-400 mt-0.5">USD · incl. analyzer</div>
+        </div>
+        <div className="bg-gray-50 dark:bg-gray-800/60 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
+          <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">
+            Tokens totales
+          </div>
+          <div className="text-2xl font-bold text-gray-700 dark:text-gray-200">
+            {formatTokens(usage.total_tokens)}
+          </div>
+          <div className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">input + output</div>
+        </div>
+        <div className="col-span-2 sm:col-span-1 bg-gray-50 dark:bg-gray-800/60 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
+          <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">
+            Costo por pregunta
+          </div>
+          <div className="text-2xl font-bold text-gray-700 dark:text-gray-200">
+            {usage.total_cost_usd && usage.llm_breakdown
+              ? formatCost(usage.total_cost_usd / Math.max(1, usage.llm_breakdown.reduce((a, b) => a + (b.tokens > 0 ? 1 : 0), 0)))
+              : '—'
+            }
+          </div>
+          <div className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">aprox.</div>
+        </div>
+      </div>
+
+      {/* Desglose por proveedor */}
+      <div className="space-y-2">
+        <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-3">
+          Desglose por proveedor (solo llamadas LLM)
+        </p>
+        {[
+          { data: openai, label: 'ChatGPT (GPT-4.1)', dot: 'bg-emerald-500', bg: 'bg-emerald-50 dark:bg-emerald-900/20', border: 'border-emerald-100 dark:border-emerald-800/50', text: 'text-emerald-700 dark:text-emerald-300' },
+          { data: gemini, label: 'Gemini (2.5 Pro)',  dot: 'bg-blue-500',    bg: 'bg-blue-50 dark:bg-blue-900/20',       border: 'border-blue-100 dark:border-blue-800/50',     text: 'text-blue-700 dark:text-blue-300'     },
+        ].map(({ data, label, dot, bg, border, text }) => (
+          <div key={label} className={`flex items-center justify-between rounded-xl px-4 py-3 border ${bg} ${border}`}>
+            <div className="flex items-center gap-2">
+              <div className={`w-2.5 h-2.5 rounded-full ${dot}`} />
+              <span className={`text-sm font-medium ${text}`}>{label}</span>
+            </div>
+            <div className="flex items-center gap-5 text-sm">
+              <div className="text-right">
+                <div className={`font-bold ${text}`}>{formatTokens(data?.tokens)}</div>
+                <div className="text-xs text-gray-400 dark:text-gray-500">tokens</div>
+              </div>
+              <div className="text-right">
+                <div className={`font-bold ${text}`}>{formatCost(data?.cost_usd)}</div>
+                <div className="text-xs text-gray-400 dark:text-gray-500">USD</div>
+              </div>
+            </div>
+          </div>
+        ))}
+        <p className="text-xs text-gray-400 dark:text-gray-500 mt-2 italic">
+          El costo total incluye además el modelo analista (GPT-4.1-mini) que procesa cada respuesta.
+        </p>
+      </div>
+    </div>
   )
 }

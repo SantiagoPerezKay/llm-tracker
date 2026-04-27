@@ -1,10 +1,11 @@
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from app.core.database import engine, Base
+from app.core.security import get_current_user
 from app.routes import businesses, analyses, questions
-from app.routes import schedules
+from app.routes import schedules, auth
 from app.services.scheduler import start_scheduler, stop_scheduler
 
 
@@ -39,10 +40,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(businesses.router, prefix="/api/businesses",  tags=["Businesses"])
-app.include_router(analyses.router,   prefix="/api/analyses",    tags=["Analyses"])
-app.include_router(questions.router,  prefix="/api/questions",   tags=["Questions"])
-app.include_router(schedules.router,  prefix="/api/schedules",   tags=["Schedules"])
+# Ruta pública: login (sin autenticación)
+app.include_router(auth.router,       prefix="/api/auth",        tags=["Auth"])
+
+# Rutas protegidas: requieren JWT válido
+_auth = [Depends(get_current_user)]
+app.include_router(businesses.router, prefix="/api/businesses",  tags=["Businesses"], dependencies=_auth)
+app.include_router(analyses.router,   prefix="/api/analyses",    tags=["Analyses"],   dependencies=_auth)
+app.include_router(questions.router,  prefix="/api/questions",   tags=["Questions"],  dependencies=_auth)
+app.include_router(schedules.router,  prefix="/api/schedules",   tags=["Schedules"],  dependencies=_auth)
 
 
 @app.get("/api/health", tags=["Health"])

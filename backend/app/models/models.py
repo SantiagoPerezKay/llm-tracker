@@ -70,6 +70,10 @@ class Analysis(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
     completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
 
+    # Uso de tokens y costo acumulado del análisis completo
+    total_tokens_used: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    total_cost_usd: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+
     business: Mapped["Business"] = relationship("Business", back_populates="analyses")
     questions: Mapped[list["Question"]] = relationship("Question", back_populates="analysis", cascade="all, delete-orphan")
 
@@ -96,6 +100,9 @@ class Response(Base):
     # Respuesta cruda
     raw_response: Mapped[str] = mapped_column(Text, nullable=False)
     tokens_used: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    input_tokens: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    output_tokens: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    cost_usd: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     response_time_ms: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
 
     # Métricas extraídas por el LLM analista
